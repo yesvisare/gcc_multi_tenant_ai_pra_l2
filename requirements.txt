@@ -1,0 +1,30 @@
+# Core dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+python-dotenv==1.0.0
+pytest==7.4.4
+
+# Logging and utilities
+structlog==24.1.0
+
+# Infrastructure dependencies (optional - uncomment to enable)
+# PostgreSQL database
+# psycopg2-binary==2.9.9
+
+# Redis cache and distributed locks
+# redis==5.0.1
+
+# Celery task queue for async orchestration
+# celery==5.3.4
+
+# AWS S3 for object storage and backups
+# boto3==1.34.34
+
+# Pinecone vector database (optional for RAG systems)
+# pinecone-client==3.0.0
+
+# Jupyter for interactive notebooks
+jupyter==1.0.0
+jupyterlab==4.0.10
+ipykernel==6.28.0

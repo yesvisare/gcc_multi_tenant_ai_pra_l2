@@ -1,0 +1,91 @@
+{
+  "migration_scenarios": [
+    {
+      "tenant_id": "tenant_001_acme_corp",
+      "source_env": "blue",
+      "target_env": "green",
+      "description": "Platinum tier tenant - zero downtime migration"
+    },
+    {
+      "tenant_id": "tenant_002_globex",
+      "source_env": "us-east-1",
+      "target_env": "eu-west-1",
+      "description": "Cross-region migration for GDPR compliance"
+    },
+    {
+      "tenant_id": "tenant_003_initech",
+      "source_env": "v1_infrastructure",
+      "target_env": "v2_infrastructure",
+      "description": "Infrastructure upgrade migration"
+    }
+  ],
+  "gdpr_deletion_requests": [
+    {
+      "tenant_id": "tenant_004_departed_customer",
+      "request_id": "gdpr_req_20250118_001",
+      "requested_at": "2025-01-18T10:30:00Z",
+      "reason": "Customer offboarding - right to erasure",
+      "systems": ["postgresql", "redis", "pinecone", "s3", "cloudwatch", "backups", "analytics"]
+    },
+    {
+      "tenant_id": "tenant_005_test_account",
+      "request_id": "gdpr_req_20250118_002",
+      "requested_at": "2025-01-18T14:15:00Z",
+      "reason": "Test data cleanup",
+      "systems": ["postgresql", "redis", "pinecone", "s3"]
+    }
+  ],
+  "backup_schedules": [
+    {
+      "tenant_id": "tenant_006_enterprise",
+      "frequency": "daily",
+      "retention_days": 365,
+      "cross_region": true,
+      "tier": "platinum"
+    },
+    {
+      "tenant_id": "tenant_007_standard",
+      "frequency": "weekly",
+      "retention_days": 90,
+      "cross_region": false,
+      "tier": "gold"
+    },
+    {
+      "tenant_id": "tenant_008_basic",
+      "frequency": "monthly",
+      "retention_days": 30,
+      "cross_region": false,
+      "tier": "bronze"
+    }
+  ],
+  "clone_operations": [
+    {
+      "source_tenant_id": "tenant_009_production",
+      "target_tenant_id": "tenant_009_staging",
+      "anonymize_data": true,
+      "selective_sync": ["documents", "embeddings", "configs"],
+      "purpose": "Staging environment for testing new features"
+    },
+    {
+      "source_tenant_id": "tenant_010_customer_a",
+      "target_tenant_id": "tenant_010_customer_a_dev",
+      "anonymize_data": true,
+      "selective_sync": ["metadata", "configs"],
+      "purpose": "Development environment with anonymized data"
+    }
+  ],
+  "metadata": {
+    "source": "L3_M14_3_example_scenarios",
+    "purpose": "Demonstration data for tenant lifecycle operations",
+    "version": "1.0",
+    "systems_tracked": [
+      "postgresql",
+      "redis",
+      "pinecone",
+      "s3",
+      "cloudwatch",
+      "backups",
+      "analytics"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "migration_config": {
+    "traffic_cutover_stages": [10, 25, 50, 100],
+    "stabilization_delay_seconds": 30,
+    "rollback_timeout_seconds": 60,
+    "max_retry_attempts": 3,
+    "enable_dual_write": true,
+    "verify_checksums": true
+  },
+  "gdpr_config": {
+    "deletion_timeout_seconds": 300,
+    "verification_required": true,
+    "generate_certificate": true,
+    "anonymize_logs": true,
+    "backup_exclusion": true,
+    "legal_hold_check": true
+  },
+  "backup_config": {
+    "default_retention_days": 90,
+    "cross_region_replication": false,
+    "compression_enabled": true,
+    "encryption_enabled": true,
+    "point_in_time_recovery": true
+  }
+}
