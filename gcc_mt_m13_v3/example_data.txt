@@ -1,0 +1,187 @@
+L3 M13.3: Cost Optimization Strategies - Example Usage Scenarios
+
+=========================================================================
+SCENARIO 1: Finance Department - High Volume Tenant
+=========================================================================
+Tenant: Finance
+Monthly Usage:
+- Queries: 100,000
+- Storage: 200 GB
+- Compute: 500 pod-hours
+- Vector Operations: 500,000
+
+Cost Breakdown:
+- LLM API: $200 (100K × $0.002)
+- Storage: $4.60 (200 GB × $0.023)
+- Compute: $25 (500 × $0.05)
+- Vector Ops: $50 (500K × $0.0001)
+- Direct Total: $279.60
+- Overhead (20%): $55.92
+- Subtotal: $335.52
+- Volume Discount (15%): -$50.33
+- Final Cost: $285.19 USD = ₹23,671 INR
+- Cost per Query: ₹0.24
+
+ROI Analysis:
+- Finance saves ₹12 Cr/year in manual research costs
+- Platform cost: ₹2.84 L/year
+- ROI: 42x return on investment
+
+=========================================================================
+SCENARIO 2: Legal Department - Storage-Heavy Tenant
+=========================================================================
+Tenant: Legal
+Monthly Usage:
+- Queries: 20,000
+- Storage: 5,000 GB (contract repository)
+- Compute: 100 pod-hours
+- Vector Operations: 100,000
+
+Cost Breakdown:
+- LLM API: $40
+- Storage: $115 (largest component)
+- Compute: $5
+- Vector Ops: $10
+- Direct Total: $170
+- Overhead (20%): $34
+- Subtotal: $204
+- Volume Discount (15%): -$30.60
+- Final Cost: $173.40 USD = ₹14,392 INR
+
+Optimization Opportunity:
+- Implement document archival for old contracts
+- Move inactive documents to cheaper cold storage
+- Potential savings: 40% on storage costs
+
+=========================================================================
+SCENARIO 3: HR Department - Low Volume Tenant
+=========================================================================
+Tenant: HR
+Monthly Usage:
+- Queries: 5,000
+- Storage: 20 GB
+- Compute: 50 pod-hours
+- Vector Operations: 25,000
+
+Cost Breakdown:
+- LLM API: $10
+- Storage: $0.46
+- Compute: $2.50
+- Vector Ops: $2.50
+- Direct Total: $15.46
+- Overhead (20%): $3.09
+- Subtotal: $18.55
+- Volume Discount (0%): $0 (below 10K threshold)
+- Final Cost: $18.55 USD = ₹1,540 INR
+
+=========================================================================
+SCENARIO 4: Cost Anomaly Detection Example
+=========================================================================
+Tenant: Marketing
+Month 1 Cost: ₹50,000
+Month 2 Cost: ₹200,000 (300% increase)
+
+Anomaly Alert Triggered:
+- Change: +300% (exceeds 50% threshold)
+- Root Cause Analysis:
+  * Query count: 10K → 50K (+400%)
+  * Storage: 50 GB → 60 GB (+20%)
+  * Compute: 100 → 150 pod-hours (+50%)
+- Investigation: New AI chatbot launched using RAG platform
+- Action: Verified with Marketing team, usage legitimate
+- Resolution: Increase Marketing's budget allocation
+
+=========================================================================
+SCENARIO 5: Platform-Wide Summary (50 Tenants)
+=========================================================================
+Total Monthly Cost: ₹1 Cr (₹10 Cr annual)
+Total Queries: 5M/month
+Average Cost per Query: ₹2.00
+
+Cost Distribution:
+- Top 10% tenants (5): 60% of cost (₹60 L/month)
+- Top 50% tenants (25): 90% of cost (₹90 L/month)
+- Bottom 50% tenants (25): 10% of cost (₹10 L/month)
+
+Top 5 Tenants by Cost:
+1. Finance: ₹25 L (25%)
+2. Operations: ₹20 L (20%)
+3. Legal: ₹15 L (15%)
+4. Marketing: ₹10 L (10%)
+5. Customer Support: ₹8 L (8%)
+
+Platform ROI:
+- Total Platform Cost: ₹10 Cr/year
+- Total Value Generated: ₹36 Cr/year (savings across all tenants)
+- ROI: 3.6x
+
+=========================================================================
+SCENARIO 6: Migration Cost Estimation
+=========================================================================
+Legal wants to upload 5,000 contracts to RAG platform.
+
+Pre-Upload Estimate:
+- Documents: 5,000
+- Average Size: 2 MB/contract
+- Total Size: 9.77 GB
+- Monthly Storage Cost: ₹18.71 (9.77 GB × $0.023 × 83)
+- Annual Storage Cost: ₹224.52
+
+Recommendation: Proceed (cost acceptable)
+
+Alternative Scenario - Large Migration:
+- Documents: 50,000
+- Average Size: 5 MB/document
+- Total Size: 244 GB
+- Monthly Storage Cost: ₹466.82
+- Annual Storage Cost: ₹5,601.84
+
+Warning: High cost migration - notify tenant and get approval
+
+=========================================================================
+SCENARIO 7: Cost Attribution Validation
+=========================================================================
+Monthly Reconciliation (End of Month):
+
+Sum of Tenant Costs: ₹98.5 L
+Actual Cloud Bill: ₹102 L
+Variance: 3.4% (within 10% tolerance)
+Status: PASS
+
+Action: No investigation needed (accurate attribution)
+
+Counter-Example - Failed Validation:
+Sum of Tenant Costs: ₹85 L
+Actual Cloud Bill: ₹102 L
+Variance: 16.7% (exceeds 10% tolerance)
+Status: FAIL
+
+Investigation: Missing cost component identified
+- Forgot to track vector database operations
+- Added vector ops metering
+- Re-ran attribution, now accurate
+
+=========================================================================
+VOLUME DISCOUNT IMPACT ANALYSIS
+=========================================================================
+
+Scenario: Finance grows from 50K → 120K queries/month
+
+Before (50K queries - TIER_1: 15% discount):
+- Direct + Overhead: ₹14 L
+- Discount: ₹2.1 L
+- Final Cost: ₹11.9 L
+
+After (120K queries - TIER_2: 30% discount):
+- Direct + Overhead: ₹33.6 L
+- Discount: ₹10.08 L
+- Final Cost: ₹23.52 L
+
+Analysis:
+- Query increase: +140%
+- Cost increase: +97% (less than query increase due to better discount tier)
+- Cost per query: ₹0.24 → ₹0.196 (-18% efficiency gain)
+
+Platform Strategy: Volume discounts incentivize growth and improve economics
+
+=========================================================================

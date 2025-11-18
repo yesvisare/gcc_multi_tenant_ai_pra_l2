@@ -1,0 +1,36 @@
+{
+  "platform_config": {
+    "name": "GCC Multi-Tenant RAG Platform",
+    "version": "1.0.0",
+    "cost_attribution_enabled": true
+  },
+  "cost_constants": {
+    "llm_cost_per_query_usd": 0.002,
+    "storage_cost_per_gb_usd": 0.023,
+    "compute_cost_per_pod_hour_usd": 0.05,
+    "vector_cost_per_op_usd": 0.0001,
+    "usd_to_inr": 83.0,
+    "overhead_rate": 0.20
+  },
+  "volume_discounts": {
+    "tier_0": {"min": 0, "max": 10000, "discount": 0.0},
+    "tier_1": {"min": 10000, "max": 100000, "discount": 0.15},
+    "tier_2": {"min": 100000, "max": 1000000, "discount": 0.30},
+    "tier_3": {"min": 1000000, "max": null, "discount": 0.40}
+  },
+  "anomaly_detection": {
+    "enabled": true,
+    "spike_threshold_percent": 50,
+    "alert_channels": ["email", "slack", "pagerduty"]
+  },
+  "reporting": {
+    "invoice_generation": "monthly",
+    "platform_summary": "monthly",
+    "cfo_report": "quarterly"
+  },
+  "validation": {
+    "reconciliation_enabled": true,
+    "variance_tolerance_percent": 10,
+    "reconciliation_schedule": "monthly"
+  }
+}

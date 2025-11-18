@@ -1,0 +1,101 @@
+{
+  "tenant_usage_examples": [
+    {
+      "tenant_id": "finance",
+      "description": "High-volume tenant with 100K queries/month",
+      "monthly_usage": {
+        "query_count": 100000,
+        "storage_gb": 200.0,
+        "compute_pod_hours": 500.0,
+        "vector_operations": 500000
+      },
+      "expected_cost": {
+        "direct_cost_usd": 279.60,
+        "overhead_20_percent_usd": 335.52,
+        "volume_discount_15_percent": -50.33,
+        "final_cost_usd": 285.19,
+        "final_cost_inr": 23671,
+        "cost_per_query_inr": 0.24
+      },
+      "discount_tier": "TIER_1 (15% - 10K-100K queries)"
+    },
+    {
+      "tenant_id": "legal",
+      "description": "Medium-volume tenant with 50K queries/month",
+      "monthly_usage": {
+        "query_count": 50000,
+        "storage_gb": 100.0,
+        "compute_pod_hours": 200.0,
+        "vector_operations": 250000
+      },
+      "discount_tier": "TIER_1 (15% - 10K-100K queries)"
+    },
+    {
+      "tenant_id": "hr",
+      "description": "Low-volume tenant with 5K queries/month",
+      "monthly_usage": {
+        "query_count": 5000,
+        "storage_gb": 20.0,
+        "compute_pod_hours": 50.0,
+        "vector_operations": 25000
+      },
+      "discount_tier": "TIER_0 (0% - < 10K queries)"
+    },
+    {
+      "tenant_id": "operations",
+      "description": "Very high-volume tenant with 1.5M queries/month",
+      "monthly_usage": {
+        "query_count": 1500000,
+        "storage_gb": 1000.0,
+        "compute_pod_hours": 2000.0,
+        "vector_operations": 5000000
+      },
+      "discount_tier": "TIER_3 (40% - > 1M queries)"
+    }
+  ],
+  "cost_constants": {
+    "llm_cost_per_query_usd": 0.002,
+    "storage_cost_per_gb_usd": 0.023,
+    "compute_cost_per_pod_hour_usd": 0.05,
+    "vector_cost_per_op_usd": 0.0001,
+    "usd_to_inr": 83.0,
+    "overhead_rate": 0.20
+  },
+  "volume_discount_tiers": [
+    {"tier": 0, "min_queries": 0, "max_queries": 10000, "discount": "0%"},
+    {"tier": 1, "min_queries": 10000, "max_queries": 100000, "discount": "15%"},
+    {"tier": 2, "min_queries": 100000, "max_queries": 1000000, "discount": "30%"},
+    {"tier": 3, "min_queries": 1000000, "max_queries": "infinity", "discount": "40%"}
+  ],
+  "platform_summary_example": {
+    "total_tenants": 50,
+    "total_monthly_cost_inr": 10000000,
+    "total_queries": 5000000,
+    "avg_cost_per_query_inr": 2.0,
+    "top_3_tenants_by_cost": [
+      {"tenant_id": "finance", "cost_inr": 2500000, "percentage": 25},
+      {"tenant_id": "operations", "cost_inr": 2000000, "percentage": 20},
+      {"tenant_id": "legal", "cost_inr": 1500000, "percentage": 15}
+    ]
+  },
+  "anomaly_examples": [
+    {
+      "scenario": "Storage spike from document migration",
+      "tenant_id": "legal",
+      "previous_month_cost_inr": 150000,
+      "current_month_cost_inr": 1500000,
+      "change_percent": 900,
+      "root_cause": "Uploaded 5,000 contracts (2TB total)",
+      "action": "Alert tenant owner before month-end"
+    },
+    {
+      "scenario": "Query surge from new feature launch",
+      "tenant_id": "marketing",
+      "previous_month_cost_inr": 50000,
+      "current_month_cost_inr": 200000,
+      "change_percent": 300,
+      "root_cause": "Launched AI chatbot using RAG platform",
+      "action": "Verify usage is legitimate, not a leak"
+    }
+  ]
+}
