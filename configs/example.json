@@ -1,0 +1,11 @@
+{
+  "description": "Example configuration for platform governance",
+  "settings": {
+    "timeout": 30,
+    "max_retries": 3
+  },
+  "notes": [
+    "This is a placeholder config file",
+    "Customize based on your GCC requirements"
+  ]
+}

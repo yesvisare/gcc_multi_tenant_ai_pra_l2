@@ -1,0 +1,215 @@
+# Example Governance Scenarios for L3 M14.4
+
+## Scenario 1: Small GCC with High Compliance
+Organizational Context:
+- Number of tenants: 8 business units
+- Tenant sophistication: Medium (1-2 technical people per BU)
+- Compliance level: Critical (SOX, finance/legal requirements)
+- Rate of change: Low (stable platform, quarterly releases)
+
+Expected Operating Model: CENTRALIZED
+Rationale: Critical compliance requires strong control and audit trails, even at small scale
+Team Size: 2 engineers (minimum for redundancy)
+Annual Cost: ₹60L (₹7.5L per tenant)
+
+## Scenario 2: Large GCC with Sophisticated Tenants
+Organizational Context:
+- Number of tenants: 75 business units
+- Tenant sophistication: High (dedicated engineering teams)
+- Compliance level: Moderate (standard corporate IT policies)
+- Rate of change: High (frequent feature requests, experimentation)
+
+Expected Operating Model: FEDERATED
+Rationale: Tenants can self-manage, platform provides infrastructure only
+Team Size: 4 engineers (infrastructure team)
+Annual Cost: ₹1.2Cr (₹1.6L per tenant, tenants self-manage)
+
+## Scenario 3: Medium GCC with Mixed Sophistication (Most Common)
+Organizational Context:
+- Number of tenants: 45 business units (30 business, 15 engineering)
+- Tenant sophistication: Medium (mixed capabilities)
+- Compliance level: Moderate (standard corporate compliance)
+- Rate of change: Medium (quarterly feature releases)
+
+Expected Operating Model: HYBRID
+Rationale: Balance control and velocity, champions bridge technical gap
+Team Size: 4 platform engineers + 45 champions (2-4 hours/week each)
+Annual Cost: ₹1.2Cr (platform) + ₹45L (champions) = ₹1.65Cr (₹3.7L per tenant)
+
+Escalation Workflow:
+- Tier 1 (80%): Self-service portal (quota <10GB, same-org access, FAQ questions)
+- Tier 2 (15%): Tenant champions (quota 10-50GB, complex access, configuration changes)
+- Tier 3 (5%): Platform team (bugs, features, security incidents, quota >50GB)
+
+## Scenario 4: Real GCC Journey (Scaling 10 → 50 tenants)
+
+Year 1 (10 tenants, centralized):
+- Team: 2 engineers
+- Requests: 30/month
+- Onboarding: 2 days
+- Ticket backlog: 3 days
+- Satisfaction: 95%
+- Cost: ₹60L/year (₹6L per tenant)
+- Status: Working well, manual ops acceptable
+
+Year 2 (30 tenants, cracks appear):
+- Team: 2 engineers (hiring delayed)
+- Requests: 150/month (5× increase)
+- Onboarding: 10 days (unacceptable)
+- Ticket backlog: 2 weeks (team overwhelmed)
+- Satisfaction: 65% (tenants frustrated)
+- Cost: ₹60L/year (₹2L per tenant, but service degraded)
+- Problem: Team capacity exceeded, math broke (150 requests × 2 hours = 300 hours, only 320 hours available)
+- Fix: Emergency hire (added 2 engineers → 4 total), started building self-service portal
+
+Year 2.5 (Self-service portal launch):
+- Team: 4 engineers
+- Requests: 60/month (60% reduction via self-service)
+- Onboarding: 3 days (better, but still manual)
+- Ticket backlog: 3 days (manageable)
+- Satisfaction: 75% (improving)
+- Cost: ₹1.2Cr/year (₹4L per tenant)
+- Portal investment: ₹15L (3-month project)
+- Better, but still centralized bottleneck for features
+
+Year 3 (50 tenants, hybrid redesign):
+- Platform team: 5 engineers (tier 3 only)
+- Tenant champions: 50 champions (1 per BU)
+- Requests: 500/month total, but distributed:
+  * Tier 1 (80%): 400 auto-resolved by portal
+  * Tier 2 (15%): 75 handled by champions
+  * Tier 3 (5%): 25 escalated to platform team
+- Platform team workload: 25 requests/month (was 60)
+- Onboarding: 1 day (mostly self-service + champion)
+- Ticket backlog: 2 days (excellent)
+- Satisfaction: 92% (tenants love self-service)
+- Cost: ₹1.5Cr (platform) + ₹50L (champions) = ₹2Cr/year (₹4L per tenant)
+- Champion training: 2-day program × 50 people = 100 person-days investment
+- Success: Scaled to 50 tenants without linearly scaling team
+
+Key Learnings:
+1. Centralized works until ~15 tenants, then needs self-service
+2. Self-service buys time until ~30 tenants, then needs champions
+3. Hybrid works from 30-100 tenants with proper training
+4. Governance framework must evolve with scale (annual review)
+5. CFO/CTO/Compliance alignment took 3 months (critical, don't skip)
+
+## Scenario 5: Common Failures
+
+Failure 1: Centralized Bottleneck
+- GCC: Financial services, 25 tenants
+- Problem: 3 engineers, 75 requests/month × 3-4 hours each = 225-300 hours (exceeds capacity)
+- Symptom: Ticket backlog 3 weeks, tenants complaining to CFO
+- Root cause: No self-service, every request needs hand-holding
+- Fix: Built self-service portal (₹15L, 3 months), reduced request time 80% (3 hours → 30 min)
+- Result: 75 × 30 min = 38 hours/month (manageable), backlog cleared in 1 month
+
+Failure 2: Federated Chaos
+- GCC: Tech company, 60 tenants, federated model
+- Problem: 60 different embedding models, 12 tenants with PUBLIC S3 buckets (data leak risk)
+- Symptom: Security audit found vulnerabilities, cost overruns (₹50L/year waste)
+- Root cause: No platform-enforced standards, tenants made mistakes
+- Fix: Moved to hybrid with guardrails (OPA policies, 3 approved configurations)
+- Result: 12 security issues → 0, cost savings ₹50L/year
+
+Failure 3: Hybrid Without Champions
+- GCC: Manufacturing, 40 tenants, attempted hybrid
+- Problem: Champions were VPs/Directors with no time (15 min/week vs. 2-4 hours needed)
+- Symptom: Tier 2 requests unanswered, everything escalated to platform team anyway
+- Root cause: Champion role not properly staffed (wrong people, no time allocation)
+- Fix: Re-scoped champions to senior engineers with 10% time + training + recognition (₹50K bonus)
+- Result: 85% of tier 2 requests resolved by champions, platform team focused on tier 3
+
+## Scenario 6: Self-Service Adoption Plateau
+
+GCC: 50 tenants, built excellent self-service portal
+Expected: 80% adoption
+Reality: Plateau at 65-70%
+
+Why the 20-30% refuses self-service:
+- Type 1: "Just Fix It for Me" tenants (10%) - Business users with learned helplessness
+  Fix: Make self-service EASIER than ticket submission, add inline help
+- Type 2: Edge Case tenants (10%) - Genuinely complex requirements that don't fit workflows
+  Fix: Accept this, 10% tier 3 escalation is fine
+- Type 3: Compliance Paranoid tenants (5%) - Want paper trail for every change
+  Fix: Educate on audit trails (self-service portal logs everything too)
+- Type 4: Champion Bypass tenants (5%) - Escalate directly to platform, bypass champion
+  Fix: Enforce escalation policy, route bypasses back to champion
+
+Economic Reality:
+- 60% self-service: 200 requests × 40% = 80 human-handled = 40 hours/month
+- 80% self-service: 200 requests × 20% = 40 human-handled = 20 hours/month (2× better)
+- 90% self-service: 200 requests × 10% = 20 human-handled = 10 hours/month (marginal gain)
+
+Diminishing returns: Stop at 80-85% self-service, don't fight for 100%
+
+## Scenario 7: Cost Comparison (Centralized vs. Decentralized)
+
+50 tenants, medium complexity, hybrid model:
+- Centralized platform team: 5 engineers = ₹1.5Cr/year
+- Champions: 50 × ₹1L/year = ₹50L/year
+- Total: ₹2Cr/year (₹4L per tenant)
+
+Alternative: Decentralized (1 engineer per tenant):
+- 50 tenants × 1 engineer × ₹30L = ₹15Cr/year
+- Total: ₹15Cr/year (₹30L per tenant)
+
+Savings: ₹15Cr - ₹2Cr = ₹13Cr/year (87% reduction)
+ROI: ₹15Cr / ₹2Cr = 7.5× (platform provides 7.5× ROI)
+
+This is why centralized platforms exist: Economies of scale through shared infrastructure and self-service.
+
+## Scenario 8: SLA Tiers
+
+Platinum Tier (10 tenants):
+- Availability: 99.99% (52 minutes downtime/year)
+- Response time: 200ms P95
+- Support response: 15 minutes
+- Incident priority: P0
+- Dedicated support: Yes (1 engineer assigned)
+- Cost: ₹12L per tenant per year (3× silver)
+
+Gold Tier (25 tenants):
+- Availability: 99.9% (8.7 hours downtime/year)
+- Response time: 500ms P95
+- Support response: 1 hour
+- Incident priority: P1
+- Dedicated support: No (shared pool)
+- Cost: ₹6L per tenant per year (1.5× silver)
+
+Silver Tier (15 tenants):
+- Availability: 99% (3.65 days downtime/year)
+- Response time: 1000ms P95
+- Support response: 4 hours
+- Incident priority: P2
+- Dedicated support: No (best-effort)
+- Cost: ₹4L per tenant per year (baseline)
+
+Total: 50 tenants, weighted average ₹7L per tenant
+Revenue: ₹3.5Cr/year from tenants (via chargeback)
+Platform cost: ₹2Cr/year
+Profit: ₹1.5Cr/year (platform runs at 43% margin)
+
+## Scenario 9: Platform Maturity Assessment
+
+Assessment for 3 dimensions:
+
+Onboarding (Level 3 - Defined):
+- Evidence: Process documented, partially automated, time tracked
+- Gaps: No error tracking, no optimization based on data
+- Next actions: Measure onboarding errors (target <5%), implement rollback, A/B test UX
+
+Self-Service (Level 2 - Repeatable):
+- Evidence: Portal exists, documented
+- Gaps: Only 60% adoption (target 80%), no success rate measurement
+- Next actions: Add auto-approval for tier 1, track adoption metrics, optimize workflows
+
+Monitoring (Level 3 - Defined):
+- Evidence: Per-tenant metrics, SLA tracking, alerting
+- Gaps: No predictive monitoring, no auto-remediation
+- Next actions: Implement anomaly detection, auto-remediate common issues
+
+Overall Maturity: Level 2.7 (between Repeatable and Defined)
+Priority Focus: Self-Service (lowest maturity) - Increase adoption to 80%
+
+(End of examples)

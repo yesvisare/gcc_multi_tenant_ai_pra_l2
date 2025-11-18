@@ -1,0 +1,180 @@
+{
+  "organizational_contexts": [
+    {
+      "name": "Small GCC with high compliance",
+      "num_tenants": 8,
+      "tenant_sophistication": "medium",
+      "compliance_level": "critical",
+      "rate_of_change": "low",
+      "expected_model": "centralized",
+      "description": "Financial services GCC with SOX compliance requirements"
+    },
+    {
+      "name": "Large GCC with sophisticated tenants",
+      "num_tenants": 75,
+      "tenant_sophistication": "high",
+      "compliance_level": "moderate",
+      "rate_of_change": "high",
+      "expected_model": "federated",
+      "description": "Tech company GCC where each BU has dedicated engineering teams"
+    },
+    {
+      "name": "Medium GCC with mixed sophistication",
+      "num_tenants": 45,
+      "tenant_sophistication": "medium",
+      "compliance_level": "moderate",
+      "rate_of_change": "medium",
+      "expected_model": "hybrid",
+      "description": "Most common GCC scenario - 30 business units, 20 engineering units"
+    },
+    {
+      "name": "Growing startup GCC",
+      "num_tenants": 12,
+      "tenant_sophistication": "low",
+      "compliance_level": "low",
+      "rate_of_change": "high",
+      "expected_model": "centralized",
+      "description": "Fast-growing startup with non-technical business units"
+    },
+    {
+      "name": "Enterprise GCC at scale",
+      "num_tenants": 100,
+      "tenant_sophistication": "medium",
+      "compliance_level": "moderate",
+      "rate_of_change": "medium",
+      "expected_model": "hybrid",
+      "description": "Large enterprise GCC with diverse tenant base"
+    }
+  ],
+  "team_sizing_scenarios": [
+    {
+      "name": "Small GCC (20 tenants, low complexity, hybrid)",
+      "num_tenants": 20,
+      "complexity": "low",
+      "operating_model": "hybrid",
+      "expected_team_size": 2,
+      "expected_cost_inr": 6000000,
+      "rationale": "20 tenants / (12 × 1.5) = 1.1 → max(ceil(1.1), 2) = 2 engineers"
+    },
+    {
+      "name": "Medium GCC (50 tenants, medium complexity, hybrid)",
+      "num_tenants": 50,
+      "complexity": "medium",
+      "operating_model": "hybrid",
+      "expected_team_size": 5,
+      "expected_cost_inr": 15000000,
+      "rationale": "50 tenants / (12 × 1.0) = 4.17 → ceil(4.17) = 5 engineers"
+    },
+    {
+      "name": "Large GCC (100 tenants, high complexity, hybrid)",
+      "num_tenants": 100,
+      "complexity": "high",
+      "operating_model": "hybrid",
+      "expected_team_size": 12,
+      "expected_cost_inr": 36000000,
+      "rationale": "100 tenants / (12 × 0.75) = 11.11 → ceil(11.11) = 12 engineers"
+    },
+    {
+      "name": "Centralized model comparison (50 tenants)",
+      "num_tenants": 50,
+      "complexity": "medium",
+      "operating_model": "centralized",
+      "expected_team_size": 10,
+      "expected_cost_inr": 30000000,
+      "rationale": "50 tenants / (5 × 1.0) = 10 engineers (2× hybrid cost)"
+    },
+    {
+      "name": "Federated model comparison (75 tenants)",
+      "num_tenants": 75,
+      "complexity": "medium",
+      "operating_model": "federated",
+      "expected_team_size": 4,
+      "expected_cost_inr": 12000000,
+      "rationale": "75 tenants / (20 × 1.0) = 3.75 → ceil(3.75) = 4 engineers (platform only)"
+    }
+  ],
+  "self_service_requests": [
+    {
+      "tenant_id": "finance-analytics",
+      "request_type": "quota_increase",
+      "description": "Increase quota by 5GB for Q4 reports",
+      "expected_status": "approved",
+      "expected_approver": "AUTO",
+      "tier": 1,
+      "rationale": "Small quota increase (<10GB) auto-approved"
+    },
+    {
+      "tenant_id": "finance-analytics",
+      "request_type": "quota_increase",
+      "description": "Increase quota by 50GB for year-end processing",
+      "expected_status": "pending",
+      "expected_approver": null,
+      "tier": 2,
+      "rationale": "Large quota increase (>10GB) needs champion approval"
+    },
+    {
+      "tenant_id": "finance-analytics",
+      "request_type": "access_grant",
+      "description": "Grant access to john.doe@company.com (same-org)",
+      "expected_status": "approved",
+      "expected_approver": "AUTO",
+      "tier": 1,
+      "rationale": "Same-org access grant auto-approved"
+    },
+    {
+      "tenant_id": "sales-emea",
+      "request_type": "support_ticket",
+      "description": "How do I optimize my queries for better performance?",
+      "expected_status": "approved",
+      "expected_approver": "AUTO",
+      "tier": 1,
+      "rationale": "FAQ question auto-resolved with link to documentation"
+    },
+    {
+      "tenant_id": "legal-global",
+      "request_type": "feature_request",
+      "description": "Add support for Chinese language documents",
+      "expected_status": "pending",
+      "expected_approver": null,
+      "tier": 3,
+      "rationale": "Feature requests always need platform team review"
+    }
+  ],
+  "maturity_assessment_dimensions": [
+    {
+      "dimension": "onboarding",
+      "questions": [
+        {"question": "Onboarding process is documented", "level": 2},
+        {"question": "Onboarding is partially automated", "level": 2},
+        {"question": "Onboarding is fully automated", "level": 3},
+        {"question": "Onboarding time is measured and tracked", "level": 3},
+        {"question": "Onboarding errors are tracked and analyzed", "level": 4},
+        {"question": "Onboarding is optimized based on data", "level": 5}
+      ]
+    },
+    {
+      "dimension": "self_service",
+      "questions": [
+        {"question": "Self-service portal exists", "level": 2},
+        {"question": "80% of tier 1 requests are self-service", "level": 3},
+        {"question": "Self-service success rate is measured", "level": 4},
+        {"question": "Self-service UX is continuously improved", "level": 5}
+      ]
+    },
+    {
+      "dimension": "monitoring",
+      "questions": [
+        {"question": "Basic monitoring exists (uptime, errors)", "level": 2},
+        {"question": "Per-tenant metrics available", "level": 3},
+        {"question": "SLA tracking and alerting", "level": 3},
+        {"question": "Predictive monitoring (anomaly detection)", "level": 4},
+        {"question": "Auto-remediation for common issues", "level": 5}
+      ]
+    }
+  ],
+  "metadata": {
+    "source": "L3_M14.4_script_examples",
+    "purpose": "demonstration_and_testing",
+    "version": "1.0"
+  }
+}
