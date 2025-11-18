@@ -1,0 +1,24 @@
+{
+  "description": "Example configuration for tenant performance tiers",
+  "tenants": [
+    {
+      "tenant_id": "tenant_example",
+      "tier": "gold",
+      "settings": {
+        "cache_enabled": true,
+        "timeout_ms": 500,
+        "cache_ttl": 1800,
+        "max_qps": 500
+      }
+    }
+  ],
+  "redis_settings": {
+    "host": "localhost",
+    "port": 6379,
+    "db": 0
+  },
+  "monitoring": {
+    "enabled": false,
+    "prometheus_port": 9090
+  }
+}

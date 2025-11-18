@@ -1,0 +1,81 @@
+{
+  "description": "Example queries for L3 M13.1 Multi-Tenant Performance Patterns",
+  "tenants": [
+    {
+      "tenant_id": "tenant_sales",
+      "tier": "platinum",
+      "queries": [
+        "What were our Q4 sales performance metrics?",
+        "Show me the top 10 performing products this quarter",
+        "Which regions exceeded their sales targets?",
+        "Compare our sales performance year-over-year"
+      ]
+    },
+    {
+      "tenant_id": "tenant_hr",
+      "tier": "gold",
+      "queries": [
+        "What is the company policy on remote work?",
+        "Show me the annual review process timeline",
+        "What are the benefits available to employees?",
+        "Explain the promotion criteria for senior engineers"
+      ]
+    },
+    {
+      "tenant_id": "tenant_finance",
+      "tier": "gold",
+      "queries": [
+        "What was our EBITDA for the last fiscal year?",
+        "Show me the budget allocation by department",
+        "What are the compliance requirements for financial reporting?",
+        "Analyze our cash flow trends over the last 6 months"
+      ]
+    },
+    {
+      "tenant_id": "tenant_legal",
+      "tier": "platinum",
+      "queries": [
+        "What are the contract terms for vendor agreements?",
+        "Show me the compliance checklist for GDPR",
+        "What is our liability in case of data breaches?",
+        "Summarize the intellectual property protection policies"
+      ]
+    },
+    {
+      "tenant_id": "tenant_support",
+      "tier": "silver",
+      "queries": [
+        "How do I troubleshoot login issues?",
+        "What is the escalation process for critical tickets?",
+        "Show me the SLA commitments for premium customers",
+        "What are the common issues reported this month?"
+      ]
+    }
+  ],
+  "test_scenarios": [
+    {
+      "scenario": "Cache hit test",
+      "tenant_id": "tenant_demo",
+      "query": "What is multi-tenant performance isolation?",
+      "expected_behavior": "First call misses cache, second call hits cache"
+    },
+    {
+      "scenario": "Tier timeout test",
+      "tenant_id": "tenant_test",
+      "tier": "platinum",
+      "query": "Complex query with long processing time",
+      "expected_behavior": "Should timeout at 200ms for platinum tier"
+    },
+    {
+      "scenario": "Namespace isolation test",
+      "tenants": ["tenant_a", "tenant_b"],
+      "query": "Same query text for both tenants",
+      "expected_behavior": "Different cache keys, no collision"
+    }
+  ],
+  "metadata": {
+    "source": "augmented_script_examples",
+    "purpose": "demonstration_and_testing",
+    "module": "L3_M13.1_Performance_Patterns"
+  }
+}
