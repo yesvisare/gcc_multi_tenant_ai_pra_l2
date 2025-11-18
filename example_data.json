@@ -1,0 +1,158 @@
+{
+  "tenants": [
+    {
+      "tenant_id": "finance_dept",
+      "tenant_name": "Finance Department",
+      "tier": "platinum",
+      "max_users": 100,
+      "max_documents": 50000,
+      "max_queries_per_day": 10000,
+      "sla_target": 0.9999,
+      "support_level": "24/7",
+      "metadata": {
+        "department_code": "FIN-001",
+        "cost_center": "CC-1000",
+        "compliance_requirements": ["SOX", "SEC", "MNPI"],
+        "data_classification": "confidential"
+      }
+    },
+    {
+      "tenant_id": "legal_dept",
+      "tenant_name": "Legal Department",
+      "tier": "platinum",
+      "max_users": 50,
+      "max_documents": 10000,
+      "max_queries_per_day": 5000,
+      "sla_target": 0.9999,
+      "support_level": "24/7",
+      "metadata": {
+        "department_code": "LEG-001",
+        "cost_center": "CC-2000",
+        "compliance_requirements": ["Attorney-Client Privilege", "GDPR", "Retention Policies"],
+        "data_classification": "privileged"
+      }
+    },
+    {
+      "tenant_id": "hr_ops",
+      "tenant_name": "HR Operations",
+      "tier": "gold",
+      "max_users": 30,
+      "max_documents": 5000,
+      "max_queries_per_day": 2000,
+      "sla_target": 0.999,
+      "support_level": "business-hours",
+      "metadata": {
+        "department_code": "HR-001",
+        "cost_center": "CC-3000",
+        "compliance_requirements": ["GDPR Article 9", "Employee Data Protection"],
+        "data_classification": "sensitive"
+      }
+    },
+    {
+      "tenant_id": "global_ops",
+      "tenant_name": "Global Operations",
+      "tier": "gold",
+      "max_users": 50,
+      "max_documents": 8000,
+      "max_queries_per_day": 3000,
+      "sla_target": 0.999,
+      "support_level": "business-hours",
+      "metadata": {
+        "department_code": "OPS-001",
+        "cost_center": "CC-4000",
+        "compliance_requirements": ["ISO 27001", "SOC 2"],
+        "data_classification": "internal"
+      }
+    },
+    {
+      "tenant_id": "marketing",
+      "tenant_name": "Marketing",
+      "tier": "silver",
+      "max_users": 20,
+      "max_documents": 2000,
+      "max_queries_per_day": 500,
+      "sla_target": 0.99,
+      "support_level": "email-only",
+      "metadata": {
+        "department_code": "MKT-001",
+        "cost_center": "CC-5000",
+        "compliance_requirements": ["GDPR", "CCPA"],
+        "data_classification": "public"
+      }
+    }
+  ],
+  "feature_flags": {
+    "global_defaults": {
+      "basic_search": true,
+      "document_upload": true,
+      "user_management": true,
+      "audit_logging": true
+    },
+    "tier_defaults": {
+      "platinum": {
+        "advanced_analytics": true,
+        "dedicated_namespace": true,
+        "priority_support": true,
+        "custom_retention": true,
+        "api_access": true,
+        "sso_integration": true
+      },
+      "gold": {
+        "advanced_analytics": true,
+        "shared_namespace": true,
+        "priority_support": false,
+        "custom_retention": false,
+        "api_access": true,
+        "sso_integration": true
+      },
+      "silver": {
+        "advanced_analytics": false,
+        "shared_namespace": true,
+        "priority_support": false,
+        "custom_retention": false,
+        "api_access": false,
+        "sso_integration": false
+      }
+    },
+    "tenant_overrides": {
+      "marketing": {
+        "advanced_analytics": true,
+        "api_access": true
+      }
+    }
+  },
+  "tier_configurations": {
+    "platinum": {
+      "max_users": 100,
+      "max_documents": 50000,
+      "max_queries_per_day": 10000,
+      "sla_target": 0.9999,
+      "support_level": "24/7",
+      "monthly_cost_inr": 248000
+    },
+    "gold": {
+      "max_users": 50,
+      "max_documents": 10000,
+      "max_queries_per_day": 5000,
+      "sla_target": 0.999,
+      "support_level": "business-hours",
+      "monthly_cost_inr": 125000
+    },
+    "silver": {
+      "max_users": 20,
+      "max_documents": 2000,
+      "max_queries_per_day": 1000,
+      "sla_target": 0.99,
+      "support_level": "email-only",
+      "monthly_cost_inr": 45000
+    },
+    "bronze": {
+      "max_users": 10,
+      "max_documents": 500,
+      "max_queries_per_day": 250,
+      "sla_target": 0.95,
+      "support_level": "email-only",
+      "monthly_cost_inr": 15000
+    }
+  }
+}

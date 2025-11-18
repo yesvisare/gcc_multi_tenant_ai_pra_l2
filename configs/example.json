@@ -1,0 +1,36 @@
+{
+  "database": {
+    "postgresql": {
+      "host": "localhost",
+      "port": 5432,
+      "database": "tenant_registry",
+      "pool_size": 20,
+      "max_overflow": 10,
+      "pool_timeout": 30
+    },
+    "redis": {
+      "host": "localhost",
+      "port": 6379,
+      "db": 0,
+      "max_connections": 50
+    }
+  },
+  "service_tiers": ["platinum", "gold", "silver", "bronze"],
+  "lifecycle_states": ["active", "suspended", "migrating", "archived", "deleted"],
+  "cache_config": {
+    "critical_fields_ttl": 60,
+    "standard_fields_ttl": 300,
+    "static_fields_ttl": 3600
+  },
+  "monitoring": {
+    "health_check_interval": 300,
+    "alert_thresholds": {
+      "health_score_warning": 70,
+      "health_score_critical": 50,
+      "latency_p95_warning": 500,
+      "latency_p95_critical": 1000,
+      "error_rate_warning": 0.01,
+      "error_rate_critical": 0.05
+    }
+  }
+}
