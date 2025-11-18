@@ -1,0 +1,75 @@
+Sample Tenant Capacity Planning Scenarios
+==========================================
+
+Scenario 1: E-Commerce Platform - Quarter-End Spike
+----------------------------------------------------
+Tenant: tenant-ecommerce-001
+Current CPU Usage: 72.5%
+Historical Pattern: 15-20% spike during quarter-end sales
+Forecast: Linear regression predicts 78% base + 20% headroom = 93.6%
+Alert Level: CRITICAL - Begin emergency capacity expansion
+Action: Add 2 additional compute nodes within 30 days
+
+Scenario 2: FinTech Application - Steady Growth
+------------------------------------------------
+Tenant: tenant-fintech-042
+Current Memory Usage: 62.1%
+Historical Pattern: Consistent 2.5% monthly growth
+Forecast: 6-month trend predicts 70% + 20% headroom = 84%
+Alert Level: WARNING - Initiate procurement process
+Action: Plan memory upgrade for next maintenance window
+
+Scenario 3: SaaS Analytics - High Utilization
+----------------------------------------------
+Tenant: tenant-saas-099
+Current Storage Usage: 91.2%
+Historical Pattern: Rapid data accumulation (3% per month)
+Forecast: Already at 91%, predicted 100%+ within 2 months
+Alert Level: CRITICAL - Immediate action required
+Action: Archive old data and provision additional storage NOW
+
+Scenario 4: Media Streaming - Storage-Heavy Workload
+-----------------------------------------------------
+Tenant: tenant-media-123
+Current Storage Usage: 93.1%
+CPU/Memory Usage: Low (45%, 52%)
+Pattern: Unbalanced resource utilization
+Recommendation: Storage rebalancing - migrate to storage-optimized nodes
+Action: Move tenant to different tier with higher storage capacity
+
+Scenario 5: Healthcare Portal - Balanced Usage
+-----------------------------------------------
+Tenant: tenant-healthcare-456
+Current CPU/Memory/Storage: 63.7% / 70.4% / 58.6%
+Historical Pattern: Stable with minor seasonal variations
+Forecast: All metrics below 75% threshold for next 3 months
+Alert Level: CAUTION - Plan ahead
+Action: Monitor and review capacity roadmap quarterly
+
+Rebalancing Example: Noisy Neighbor Problem
+--------------------------------------------
+Cluster State:
+- Node A: tenant-saas-099 (88% CPU) + tenant-fintech-042 (55% CPU) = Overloaded
+- Node B: tenant-media-123 (45% CPU) + tenant-healthcare-456 (63% CPU) = Balanced
+
+Imbalance Ratio: (88 - 45) / 88 = 48% (exceeds 30% threshold)
+
+Recommendation: Move tenant-saas-099 from Node A to Node C (underutilized)
+Expected Outcome: Node A usage drops to 55%, improving overall balance
+
+Common Failure Patterns
+------------------------
+1. Insufficient Historical Data: New tenant with < 3 months data
+   Fix: Wait for minimum data collection period or use conservative defaults
+
+2. Seasonal Anomaly: Holiday spike not captured in 6-month window
+   Fix: Extend history to 12 months or apply seasonal adjustment factor
+
+3. Lead Time Mismatch: Forecast shows 90% in 1 month, procurement takes 3 months
+   Fix: Increase forecast window to 6 months for hardware procurement
+
+4. Headroom Inadequate: 20% buffer insufficient for 35% spike
+   Fix: Increase headroom factor to 1.35 for high-volatility tenants
+
+5. Alert Fatigue: Too many CAUTION alerts ignored
+   Fix: Raise CAUTION threshold to 75% and focus on WARNING/CRITICAL only

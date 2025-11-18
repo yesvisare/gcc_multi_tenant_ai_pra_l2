@@ -1,0 +1,98 @@
+{
+  "tenants": [
+    {
+      "tenant_id": "tenant-ecommerce-001",
+      "name": "E-Commerce Platform A",
+      "current_usage": {
+        "cpu_usage": 72.5,
+        "memory_usage": 68.3,
+        "storage_usage": 81.2
+      }
+    },
+    {
+      "tenant_id": "tenant-fintech-042",
+      "name": "FinTech App B",
+      "current_usage": {
+        "cpu_usage": 55.8,
+        "memory_usage": 62.1,
+        "storage_usage": 45.9
+      }
+    },
+    {
+      "tenant_id": "tenant-saas-099",
+      "name": "SaaS Analytics C",
+      "current_usage": {
+        "cpu_usage": 88.4,
+        "memory_usage": 91.2,
+        "storage_usage": 76.5
+      }
+    },
+    {
+      "tenant_id": "tenant-media-123",
+      "name": "Media Streaming D",
+      "current_usage": {
+        "cpu_usage": 45.2,
+        "memory_usage": 52.8,
+        "storage_usage": 93.1
+      }
+    },
+    {
+      "tenant_id": "tenant-healthcare-456",
+      "name": "Healthcare Portal E",
+      "current_usage": {
+        "cpu_usage": 63.7,
+        "memory_usage": 70.4,
+        "storage_usage": 58.6
+      }
+    }
+  ],
+  "forecast_requests": [
+    {
+      "tenant_id": "tenant-ecommerce-001",
+      "metric_name": "cpu_usage",
+      "months_back": 6,
+      "months_ahead": 3
+    },
+    {
+      "tenant_id": "tenant-fintech-042",
+      "metric_name": "memory_usage",
+      "months_back": 6,
+      "months_ahead": 3
+    },
+    {
+      "tenant_id": "tenant-saas-099",
+      "metric_name": "storage_usage",
+      "months_back": 6,
+      "months_ahead": 3
+    }
+  ],
+  "batch_forecast_request": {
+    "tenant_ids": [
+      "tenant-ecommerce-001",
+      "tenant-fintech-042",
+      "tenant-saas-099",
+      "tenant-media-123",
+      "tenant-healthcare-456"
+    ],
+    "metrics": [
+      "cpu_usage",
+      "memory_usage",
+      "storage_usage"
+    ]
+  },
+  "rebalancing_scenario": {
+    "tenant_usage": {
+      "tenant-ecommerce-001": 72.5,
+      "tenant-fintech-042": 55.8,
+      "tenant-saas-099": 88.4,
+      "tenant-media-123": 45.2,
+      "tenant-healthcare-456": 63.7
+    },
+    "imbalance_threshold": 0.3
+  },
+  "metadata": {
+    "source": "script_examples",
+    "purpose": "demonstration",
+    "description": "Sample tenant data for capacity planning forecasts"
+  }
+}

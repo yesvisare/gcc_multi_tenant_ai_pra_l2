@@ -1,0 +1,18 @@
+{
+  "forecasting": {
+    "headroom_factor": 1.2,
+    "history_months": 6,
+    "forecast_months": 3
+  },
+  "thresholds": {
+    "caution": 70.0,
+    "warning": 80.0,
+    "critical": 90.0
+  },
+  "rebalancing": {
+    "imbalance_threshold": 0.3,
+    "check_interval_hours": 24
+  },
+  "tenants": [],
+  "notes": "This is a placeholder configuration file. Actual tenant configurations should be added here."
+}

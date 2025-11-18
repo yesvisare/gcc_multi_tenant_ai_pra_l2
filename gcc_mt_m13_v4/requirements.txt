@@ -1,0 +1,29 @@
+# Core dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+python-dotenv==1.0.0
+pytest==7.4.4
+
+# Scientific computing and ML
+numpy==1.26.3
+scikit-learn==1.4.0
+pandas==2.2.0
+
+# Database
+psycopg2-binary==2.9.9
+
+# Monitoring and observability (optional - for production)
+prometheus-client==0.19.0
+
+# Jupyter notebook support
+jupyter==1.0.0
+jupyterlab==4.0.10
+ipykernel==6.28.0
+
+# Data visualization (for notebooks)
+matplotlib==3.8.2
+seaborn==0.13.1
+
+# Logging and utilities
+structlog==24.1.0
