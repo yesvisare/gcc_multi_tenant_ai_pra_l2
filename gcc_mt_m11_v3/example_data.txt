@@ -1,0 +1,87 @@
+# Example Tenant Documents for L3 M11.3
+# Multi-Tenant Isolation Testing
+
+## Finance Department Documents (Tenant: 11111111-1111-1111-1111-111111111111)
+- Merger Agreement Q4 2024 - Confidential acquisition terms for $500M deal
+- Financial Forecast 2025 - Revenue projections and budget allocations
+- SOX Compliance Audit Report - Internal controls documentation
+- Board Meeting Minutes Dec 2024 - Strategic decisions and executive compensation
+
+## Legal Department Documents (Tenant: 22222222-2222-2222-2222-222222222222)
+- Privileged Attorney-Client Memo - Litigation strategy for pending lawsuit
+- Patent Filing Draft - Intellectual property protection for new technology
+- Employment Contract Template - Executive compensation and non-compete clauses
+- Regulatory Compliance Review - Analysis of GDPR and CCPA requirements
+
+## HR Department Documents (Tenant: 33333333-3333-3333-3333-333333333333)
+- Employee Handbook 2025 - Company policies and procedures
+- Performance Review Guidelines - Annual evaluation process documentation
+- Benefits Enrollment Guide - Healthcare and retirement plan options
+- Diversity and Inclusion Initiative - DEI program goals and metrics
+
+## Marketing Department Documents (Tenant: 44444444-4444-4444-4444-444444444444)
+- Campaign Strategy Q1 2025 - Product launch marketing plan
+- Customer Segmentation Analysis - Target audience demographics and preferences
+- Brand Guidelines Update - Visual identity and messaging standards
+- Social Media Content Calendar - Scheduled posts for next quarter
+
+## IT Department Documents (Tenant: 55555555-5555-5555-5555-555555555555)
+- System Architecture Documentation - Infrastructure design and components
+- Security Incident Response Plan - Procedures for handling breaches
+- Database Backup Procedures - Daily backup schedule and recovery steps
+- API Integration Guide - Developer documentation for internal services
+
+## Cross-Tenant Leak Test Cases
+# These queries should NEVER return results from other tenants
+
+Test 1: Finance queries "attorney-client" (Legal's privileged docs)
+Expected: 0 results (isolation enforced)
+
+Test 2: Legal queries "merger agreement" with wrong namespace
+Expected: Error or 0 results (namespace validation)
+
+Test 3: HR queries without setting tenant context
+Expected: Error (tenant context required)
+
+Test 4: Marketing attempts SQL injection in search pattern
+Expected: Sanitized query, no leak (input validation)
+
+Test 5: IT admin bypasses RLS with BYPASSRLS privilege
+Expected: Audit log entry, access blocked (no admin exceptions)
+
+## Performance Test Data
+# For testing with 50+ tenants
+
+Tenant Count: 50
+Total Documents: 50,000,000 (1M per tenant)
+Concurrent Users: 5,000
+Query Pattern: 80% reads, 20% writes
+Peak QPS: 10,000 queries/second
+
+## Isolation Failure Scenarios (From Real Production Incidents)
+
+Failure 1: CVE-2022-1552 PostgreSQL RLS Bypass
+- PostgreSQL 14.3 had RLS policy bypass vulnerability
+- Attacker could set session variables to bypass current_setting() checks
+- Fix: Upgrade to PostgreSQL 14.4+ and don't use session variables in policies
+
+Failure 2: Namespace Typo (2024 GCC Incident)
+- Developer deployed code with trailing dash in namespace: "tenant-{uuid}-"
+- All queries returned 0 results (wrong namespace doesn't exist)
+- Impact: 2-hour outage, ₹5L SLA credits
+- Fix: Namespace validation before every query
+
+Failure 3: Performance Degradation (50+ Tenants)
+- Query latency increased from 50ms to 400ms at 100 tenants
+- Cause: Index size growth, connection pool contention, cache thrashing
+- Fix: Shard database by tenant groups (25 tenants per DB)
+
+Failure 4: Admin User Bypass (DBA Incident)
+- DBA with BYPASSRLS privilege forgot to set tenant context
+- Query returned all tenants' contracts (compliance violation)
+- Fix: Remove BYPASSRLS, create audited admin views
+
+Failure 5: User Input in Namespace (Security Bug)
+- Application used URL parameter ?tenant_id=legal directly in namespace
+- Attacker changed parameter to access other tenants' data
+- Fix: Always get tenant_id from verified JWT, never trust user input

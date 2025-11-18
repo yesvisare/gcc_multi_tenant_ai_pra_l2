@@ -1,0 +1,16 @@
+{
+  "tenant_config": {
+    "default_isolation_strategy": "namespace",
+    "rls_enabled": false,
+    "audit_logging": true
+  },
+  "security_tests": {
+    "enabled": true,
+    "test_count": 1000,
+    "schedule": "daily"
+  },
+  "settings": {
+    "timeout": 30,
+    "max_retries": 3
+  }
+}

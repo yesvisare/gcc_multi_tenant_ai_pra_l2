@@ -1,0 +1,129 @@
+{
+  "tenants": [
+    {
+      "tenant_id": "11111111-1111-1111-1111-111111111111",
+      "name": "Finance Department",
+      "isolation_strategy": "separate_database"
+    },
+    {
+      "tenant_id": "22222222-2222-2222-2222-222222222222",
+      "name": "Legal Department",
+      "isolation_strategy": "separate_database"
+    },
+    {
+      "tenant_id": "33333333-3333-3333-3333-333333333333",
+      "name": "HR Department",
+      "isolation_strategy": "namespace"
+    },
+    {
+      "tenant_id": "44444444-4444-4444-4444-444444444444",
+      "name": "Marketing Department",
+      "isolation_strategy": "namespace"
+    },
+    {
+      "tenant_id": "55555555-5555-5555-5555-555555555555",
+      "name": "IT Department",
+      "isolation_strategy": "rls"
+    }
+  ],
+  "sample_queries": [
+    {
+      "tenant_id": "11111111-1111-1111-1111-111111111111",
+      "search_pattern": "merger agreement",
+      "expected_strategy": "separate_database"
+    },
+    {
+      "tenant_id": "22222222-2222-2222-2222-222222222222",
+      "search_pattern": "privileged attorney-client",
+      "expected_strategy": "separate_database"
+    },
+    {
+      "tenant_id": "33333333-3333-3333-3333-333333333333",
+      "search_pattern": "employee handbook",
+      "expected_strategy": "namespace"
+    },
+    {
+      "tenant_id": "44444444-4444-4444-4444-444444444444",
+      "search_pattern": "campaign strategy",
+      "expected_strategy": "namespace"
+    },
+    {
+      "tenant_id": "55555555-5555-5555-5555-555555555555",
+      "search_pattern": "system documentation",
+      "expected_strategy": "rls"
+    }
+  ],
+  "cross_tenant_leak_scenarios": [
+    {
+      "scenario": "Finance user tries to query Legal documents",
+      "attacker_tenant": "11111111-1111-1111-1111-111111111111",
+      "target_tenant": "22222222-2222-2222-2222-222222222222",
+      "expected_result": "blocked"
+    },
+    {
+      "scenario": "HR user attempts namespace typo to access Finance",
+      "attacker_tenant": "33333333-3333-3333-3333-333333333333",
+      "target_tenant": "11111111-1111-1111-1111-111111111111",
+      "attack_vector": "namespace manipulation",
+      "expected_result": "blocked"
+    },
+    {
+      "scenario": "Marketing user forgets to set tenant context",
+      "attacker_tenant": "44444444-4444-4444-4444-444444444444",
+      "attack_vector": "missing tenant context",
+      "expected_result": "error - context required"
+    }
+  ],
+  "audit_examples": [
+    {
+      "timestamp": "2025-01-15T14:23:45Z",
+      "tenant_id": "11111111-1111-1111-1111-111111111111",
+      "user_id": "finance_user_123",
+      "action": "query_rls",
+      "resource": "documents",
+      "result": "success",
+      "records_returned": 15
+    },
+    {
+      "timestamp": "2025-01-15T14:24:12Z",
+      "tenant_id": "22222222-2222-2222-2222-222222222222",
+      "user_id": "legal_user_456",
+      "action": "query_namespace",
+      "resource": "vectors",
+      "result": "success",
+      "records_returned": 8
+    },
+    {
+      "timestamp": "2025-01-15T14:25:33Z",
+      "tenant_id": "33333333-3333-3333-3333-333333333333",
+      "user_id": "hr_user_789",
+      "action": "query_rls",
+      "resource": "documents",
+      "result": "blocked - cross-tenant attempt",
+      "records_returned": 0
+    }
+  ],
+  "cost_comparison": [
+    {
+      "strategy": "PostgreSQL RLS",
+      "monthly_cost_inr": 500000,
+      "tenants": 50,
+      "cost_per_tenant": 10000,
+      "isolation_percentage": 99.9
+    },
+    {
+      "strategy": "Pinecone Namespace",
+      "monthly_cost_inr": 1500000,
+      "tenants": 50,
+      "cost_per_tenant": 30000,
+      "isolation_percentage": 99.95
+    },
+    {
+      "strategy": "Separate Database",
+      "monthly_cost_inr": 5000000,
+      "tenants": 50,
+      "cost_per_tenant": 100000,
+      "isolation_percentage": 99.999
+    }
+  ]
+}
