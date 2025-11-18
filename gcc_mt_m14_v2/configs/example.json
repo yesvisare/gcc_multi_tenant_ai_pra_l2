@@ -1,0 +1,23 @@
+{
+  "detector_config": {
+    "prometheus_url": "http://prometheus:9090",
+    "error_threshold": 0.50,
+    "check_interval_seconds": 10,
+    "check_window": "5m"
+  },
+  "circuit_breaker_config": {
+    "failure_threshold": 5,
+    "timeout_seconds": 60
+  },
+  "tenant_tiers": {
+    "tenant-platinum-1": "platinum",
+    "tenant-gold-1": "gold",
+    "tenant-silver-1": "silver",
+    "tenant-bronze-1": "bronze"
+  },
+  "notification_config": {
+    "pagerduty_enabled": false,
+    "slack_enabled": false,
+    "email_enabled": true
+  }
+}

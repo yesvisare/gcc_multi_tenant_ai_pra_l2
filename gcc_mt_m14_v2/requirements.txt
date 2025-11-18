@@ -1,0 +1,26 @@
+# Core dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+python-dotenv==1.0.0
+pytest==7.4.4
+
+# Logging and utilities
+structlog==24.1.0
+
+# HTTP client for Prometheus queries
+requests==2.31.0
+
+# Circuit breaker pattern (optional alternative: pybreaker)
+# pybreaker==1.0.1
+
+# Monitoring and metrics (client-side, optional)
+prometheus-client==0.19.0
+
+# Notification integrations (optional)
+# pagerduty==0.2.0
+# slack-sdk==3.26.1
+
+# Testing
+pytest-mock==3.12.0
+pytest-asyncio==0.23.3

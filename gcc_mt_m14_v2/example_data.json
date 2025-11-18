@@ -1,0 +1,185 @@
+{
+  "tenant_configurations": [
+    {
+      "tenant_id": "tenant-platinum-1",
+      "tier": "platinum",
+      "contract_value_inr": 20000000,
+      "sla": "99.99%",
+      "description": "Large enterprise customer with ₹2 crore contract"
+    },
+    {
+      "tenant_id": "tenant-gold-1",
+      "tier": "gold",
+      "contract_value_inr": 5000000,
+      "sla": "99.9%",
+      "description": "Mid-market customer with ₹50 lakh contract"
+    },
+    {
+      "tenant_id": "tenant-silver-1",
+      "tier": "silver",
+      "contract_value_inr": 1000000,
+      "sla": "99%",
+      "description": "Small business customer with ₹10 lakh contract"
+    },
+    {
+      "tenant_id": "tenant-bronze-1",
+      "tier": "bronze",
+      "contract_value_inr": 500000,
+      "sla": "best-effort",
+      "description": "Startup customer with ₹5 lakh contract"
+    }
+  ],
+  "failure_scenarios": [
+    {
+      "scenario": "Database connection pool exhaustion",
+      "cause": "One tenant makes 1000 concurrent queries",
+      "impact": "All tenants timeout waiting for connections",
+      "blast_radius": "Platform-wide outage",
+      "detection_time_seconds": 45,
+      "mitigation": "Per-tenant connection limits"
+    },
+    {
+      "scenario": "Infinite loop query",
+      "cause": "Tenant deploys query with SELECT * JOIN without WHERE clause",
+      "impact": "Database CPU hits 100%, all queries slow",
+      "blast_radius": "Platform-wide degradation",
+      "detection_time_seconds": 30,
+      "mitigation": "Query validation and timeout"
+    },
+    {
+      "scenario": "Message queue saturation",
+      "cause": "One tenant floods queue with 10K messages/second",
+      "impact": "Other tenants' messages delayed or dropped",
+      "blast_radius": "Platform-wide message delays",
+      "detection_time_seconds": 60,
+      "mitigation": "Per-tenant queue partitions"
+    },
+    {
+      "scenario": "Shared circuit breaker trips",
+      "cause": "All tenants share one circuit breaker",
+      "impact": "One bad tenant kills entire platform",
+      "blast_radius": "Platform-wide outage",
+      "detection_time_seconds": 15,
+      "mitigation": "Per-tenant circuit breakers"
+    },
+    {
+      "scenario": "Query timeout too long",
+      "cause": "No query timeout configured",
+      "impact": "Slow queries block all tenants",
+      "blast_radius": "Platform-wide degradation",
+      "detection_time_seconds": 120,
+      "mitigation": "Set query_timeout=30s per tenant"
+    },
+    {
+      "scenario": "Circuit breaker threshold too high",
+      "cause": "Threshold set to 90% error rate",
+      "impact": "Failing tenant affects others before isolation",
+      "blast_radius": "Multiple tenants affected",
+      "detection_time_seconds": 180,
+      "mitigation": "Lower threshold to 50%"
+    }
+  ],
+  "sample_incidents": [
+    {
+      "incident_id": "INC-20250115-143000",
+      "priority": "P0",
+      "tenant_ids": ["tenant-platinum-1"],
+      "affected_tier": "platinum",
+      "error_rate": 0.85,
+      "detection_time_seconds": 40,
+      "isolation_time_seconds": 55,
+      "cost_impact_inr": 150000,
+      "root_cause": "Bad query deployment with infinite loop"
+    },
+    {
+      "incident_id": "INC-20250116-091500",
+      "priority": "P0",
+      "tenant_ids": [
+        "tenant-silver-1", "tenant-silver-2", "tenant-silver-3",
+        "tenant-bronze-1", "tenant-bronze-2", "tenant-bronze-3",
+        "tenant-bronze-4", "tenant-bronze-5", "tenant-bronze-6",
+        "tenant-bronze-7"
+      ],
+      "affected_tier": "silver",
+      "error_rate": 0.70,
+      "detection_time_seconds": 60,
+      "isolation_time_seconds": 75,
+      "cost_impact_inr": 800000,
+      "root_cause": "Database connection pool exhaustion"
+    },
+    {
+      "incident_id": "INC-20250117-180000",
+      "priority": "P1",
+      "tenant_ids": ["tenant-gold-1"],
+      "affected_tier": "gold",
+      "error_rate": 0.65,
+      "detection_time_seconds": 45,
+      "isolation_time_seconds": 60,
+      "cost_impact_inr": 200000,
+      "root_cause": "Message queue saturation from spike in traffic"
+    },
+    {
+      "incident_id": "INC-20250118-120000",
+      "priority": "P2",
+      "tenant_ids": ["tenant-bronze-1", "tenant-bronze-2"],
+      "affected_tier": "bronze",
+      "error_rate": 0.55,
+      "detection_time_seconds": 50,
+      "isolation_time_seconds": 65,
+      "cost_impact_inr": 100000,
+      "root_cause": "Query timeout configuration missing"
+    }
+  ],
+  "circuit_breaker_states": [
+    {
+      "tenant_id": "tenant-A",
+      "state": "closed",
+      "failure_count": 0,
+      "description": "Normal operation"
+    },
+    {
+      "tenant_id": "tenant-B",
+      "state": "open",
+      "failure_count": 5,
+      "opened_at": "2025-01-18T12:00:00Z",
+      "description": "Isolated due to 85% error rate"
+    },
+    {
+      "tenant_id": "tenant-C",
+      "state": "half_open",
+      "failure_count": 0,
+      "opened_at": "2025-01-18T11:58:00Z",
+      "description": "Testing recovery after 60-second timeout"
+    }
+  ],
+  "prometheus_queries": [
+    {
+      "name": "Total queries per tenant",
+      "query": "sum(rate(rag_queries_total{tenant_id=\"tenant-A\"}[5m]))",
+      "description": "Rate of total queries over 5-minute window"
+    },
+    {
+      "name": "Error queries per tenant",
+      "query": "sum(rate(rag_queries_errors{tenant_id=\"tenant-A\"}[5m]))",
+      "description": "Rate of error queries over 5-minute window"
+    },
+    {
+      "name": "Error rate calculation",
+      "query": "sum(rate(rag_queries_errors{tenant_id=\"tenant-A\"}[5m])) / sum(rate(rag_queries_total{tenant_id=\"tenant-A\"}[5m]))",
+      "description": "Error rate as percentage of total queries"
+    },
+    {
+      "name": "Active tenant discovery",
+      "query": "/api/v1/label/tenant_id/values",
+      "description": "Prometheus API to discover all active tenant IDs"
+    }
+  ],
+  "metadata": {
+    "source": "L3 M14.2 Augmented Script",
+    "purpose": "Demonstration and testing data for incident management",
+    "tenant_count": 50,
+    "platform_cost_per_outage_inr": 5500000,
+    "single_tenant_cost_per_outage_inr": 150000,
+    "savings_ratio": 36
+  }
+}
