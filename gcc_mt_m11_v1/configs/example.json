@@ -1,0 +1,9 @@
+{
+  "queries": [],
+  "settings": {
+    "timeout": 30,
+    "max_retries": 3,
+    "default_tier": "standard",
+    "default_isolation_model": "shared-db"
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "tenants": [
+    {
+      "tenant_id": "finance",
+      "tenant_name": "Finance Department",
+      "tier": "premium",
+      "isolation_model": "shared-db",
+      "admin_email": "admin@finance.example.com"
+    },
+    {
+      "tenant_id": "legal",
+      "tenant_name": "Legal Department",
+      "tier": "standard",
+      "isolation_model": "shared-db",
+      "admin_email": "admin@legal.example.com"
+    },
+    {
+      "tenant_id": "hr",
+      "tenant_name": "Human Resources",
+      "tier": "standard",
+      "isolation_model": "shared-schema",
+      "admin_email": "admin@hr.example.com"
+    },
+    {
+      "tenant_id": "banking-customer-data",
+      "tenant_name": "Banking Customer Data (High Security)",
+      "tier": "premium",
+      "isolation_model": "separate-db",
+      "admin_email": "admin@banking.example.com"
+    }
+  ],
+  "queries": [
+    "What were the Q4 revenue targets for our division?",
+    "Summarize the compliance requirements for GDPR data retention",
+    "What is the employee onboarding process for new hires?",
+    "List all contracts expiring in the next 90 days",
+    "What are the latest audit findings for financial controls?",
+    "Explain the multi-tenant isolation strategy in our RAG system",
+    "How do we handle cross-tenant data leak prevention?",
+    "What are the cost differences between shared-db and separate-db models?",
+    "Describe the tenant routing middleware implementation",
+    "How does context propagation work in async operations?"
+  ],
+  "documents": [
+    {
+      "id": "finance-q4-report-2024",
+      "title": "Q4 Financial Report 2024",
+      "content": "Revenue exceeded targets by 15% reaching ₹50 crore. Key drivers: enterprise contracts (40%), new product launches (35%), geographic expansion (25%).",
+      "metadata": {
+        "department": "finance",
+        "category": "quarterly-report",
+        "classification": "confidential",
+        "uploaded_at": "2024-01-15"
+      }
+    },
+    {
+      "id": "legal-gdpr-compliance-guide",
+      "title": "GDPR Compliance Guide",
+      "content": "Personal data must be retained for no longer than necessary. Right to erasure requires deletion within 30 days. Data breach notification required within 72 hours.",
+      "metadata": {
+        "department": "legal",
+        "category": "compliance",
+        "classification": "internal",
+        "uploaded_at": "2024-02-01"
+      }
+    },
+    {
+      "id": "hr-onboarding-process",
+      "title": "Employee Onboarding Process",
+      "content": "Week 1: IT setup, access provisioning. Week 2: Department orientation, mentor assignment. Week 3: Project introduction, training modules.",
+      "metadata": {
+        "department": "hr",
+        "category": "process",
+        "classification": "internal",
+        "uploaded_at": "2024-01-20"
+      }
+    },
+    {
+      "id": "legal-contracts-expiring-q2",
+      "title": "Contracts Expiring Q2 2024",
+      "content": "15 vendor contracts expiring: Cloud hosting (March 31), Security audit (April 15), Software licenses (May 30). Renewal negotiations required 60 days prior.",
+      "metadata": {
+        "department": "legal",
+        "category": "contracts",
+        "classification": "confidential",
+        "uploaded_at": "2024-01-10"
+      }
+    },
+    {
+      "id": "finance-audit-findings-2024",
+      "title": "Audit Findings - Financial Controls 2024",
+      "content": "3 minor findings identified: approval workflow gaps (Finance), access review delays (IT), segregation of duties (Operations). Remediation plan submitted.",
+      "metadata": {
+        "department": "finance",
+        "category": "audit",
+        "classification": "restricted",
+        "uploaded_at": "2024-02-05"
+      }
+    }
+  ],
+  "isolation_models_comparison": {
+    "shared_db": {
+      "description": "One database, logical isolation via tenant_id filters and namespaces",
+      "cost_per_tenant_per_year": "₹11.6L",
+      "onboarding_time": "15 minutes",
+      "use_case": "80% of GCC tenants with standard security requirements"
+    },
+    "shared_schema": {
+      "description": "Tenant_id column with PostgreSQL RLS policies for automatic filtering",
+      "cost_per_tenant_per_year": "₹13.6L",
+      "onboarding_time": "30 minutes",
+      "use_case": "Defense-in-depth requirements, regulatory compliance"
+    },
+    "separate_db": {
+      "description": "Dedicated PostgreSQL and vector database per tenant",
+      "cost_per_tenant_per_year": "₹58L",
+      "onboarding_time": "2 weeks",
+      "use_case": "Banking, healthcare, classified data (HIPAA, SOX)"
+    },
+    "hybrid": {
+      "description": "80% shared-db (standard tier), 20% separate-db (high-security tier)",
+      "cost_per_tenant_per_year": "₹22.4L average",
+      "onboarding_time": "Variable by tier",
+      "use_case": "GCC production recommendation for cost optimization"
+    }
+  },
+  "cost_analysis_50_tenants": {
+    "separate_systems": {
+      "infrastructure": "₹25 Cr",
+      "operations": "₹4 Cr",
+      "total": "₹29 Cr",
+      "per_tenant": "₹58L"
+    },
+    "shared_db": {
+      "infrastructure": "₹5 Cr",
+      "operations": "₹80L",
+      "total": "₹5.8 Cr",
+      "per_tenant": "₹11.6L",
+      "savings_vs_separate": "80%"
+    },
+    "hybrid_80_20": {
+      "infrastructure": "₹10 Cr",
+      "operations": "₹1.2 Cr",
+      "total": "₹11.2 Cr",
+      "per_tenant": "₹22.4L average",
+      "savings_vs_separate": "61%"
+    }
+  },
+  "tier_limits": {
+    "premium": {
+      "max_queries_per_day": 100000,
+      "max_concurrent_queries": 50,
+      "max_storage_gb": 1000,
+      "max_documents": 1000000,
+      "rate_limit_rpm": 1000,
+      "sla": "99.9%"
+    },
+    "standard": {
+      "max_queries_per_day": 10000,
+      "max_concurrent_queries": 10,
+      "max_storage_gb": 100,
+      "max_documents": 100000,
+      "rate_limit_rpm": 100,
+      "sla": "99.5%"
+    },
+    "trial": {
+      "max_queries_per_day": 1000,
+      "max_concurrent_queries": 5,
+      "max_storage_gb": 10,
+      "max_documents": 10000,
+      "rate_limit_rpm": 50,
+      "sla": "99.0%"
+    }
+  }
+}
