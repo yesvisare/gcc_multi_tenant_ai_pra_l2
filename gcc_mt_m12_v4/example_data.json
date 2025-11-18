@@ -1,0 +1,147 @@
+{
+  "compliance_configs": [
+    {
+      "tenant_id": "tenant_a_eu",
+      "tenant_name": "ACME Corp EU Division",
+      "tenant_email": "dpo@acme.eu",
+      "regulations": ["GDPR", "SOX"],
+      "retention_days": 90,
+      "data_residency": "EU",
+      "encryption_required": true,
+      "encryption_standard": "AES-256",
+      "audit_retention_days": 2555,
+      "auto_delete_enabled": true,
+      "compliance_metadata": {
+        "gdpr_dpo_contact": "dpo@acme.eu",
+        "gdpr_representative": "John Smith",
+        "sox_auditor": "EY"
+      }
+    },
+    {
+      "tenant_id": "tenant_b_us",
+      "tenant_name": "TechStart Inc US",
+      "tenant_email": "compliance@techstart.com",
+      "regulations": ["CCPA", "SOX"],
+      "retention_days": 2555,
+      "data_residency": "US",
+      "encryption_required": true,
+      "encryption_standard": "AES-256",
+      "audit_retention_days": 2555,
+      "auto_delete_enabled": true,
+      "compliance_metadata": {
+        "ccpa_contact": "privacy@techstart.com",
+        "sox_retention_override": true
+      }
+    },
+    {
+      "tenant_id": "tenant_c_in",
+      "tenant_name": "Mumbai Finance Services",
+      "tenant_email": "legal@mumbaifinance.in",
+      "regulations": ["DPDPA", "PCI-DSS"],
+      "retention_days": 180,
+      "data_residency": "IN",
+      "encryption_required": true,
+      "encryption_standard": "AES-256",
+      "audit_retention_days": 2555,
+      "auto_delete_enabled": true,
+      "compliance_metadata": {
+        "dpdpa_data_fiduciary": "Mumbai Finance Services Pvt Ltd",
+        "pci_dss_level": "Level 1"
+      }
+    },
+    {
+      "tenant_id": "tenant_d_healthcare",
+      "tenant_name": "HealthCare Global",
+      "tenant_email": "hipaa@healthcareglobal.com",
+      "regulations": ["HIPAA", "GDPR"],
+      "retention_days": 2190,
+      "data_residency": "US",
+      "encryption_required": true,
+      "encryption_standard": "AES-256",
+      "audit_retention_days": 2555,
+      "auto_delete_enabled": false,
+      "legal_hold_active": false,
+      "compliance_metadata": {
+        "hipaa_covered_entity": true,
+        "phi_retention_years": 6,
+        "gdpr_applies_to_eu_patients": true
+      }
+    },
+    {
+      "tenant_id": "tenant_e_financial",
+      "tenant_name": "Global Investment Bank",
+      "tenant_email": "compliance@globalbank.com",
+      "regulations": ["SOX", "FINRA", "GDPR"],
+      "retention_days": 2555,
+      "data_residency": "GLOBAL",
+      "encryption_required": true,
+      "encryption_standard": "RSA-4096",
+      "audit_retention_days": 3650,
+      "auto_delete_enabled": false,
+      "legal_hold_active": false,
+      "compliance_metadata": {
+        "finra_rule_17a4": true,
+        "sox_section_404": true,
+        "manual_deletion_approval_required": true
+      }
+    }
+  ],
+  "deletion_requests": [
+    {
+      "request_id": "del_tenant_a_eu_user_001_1699920000",
+      "tenant_id": "tenant_a_eu",
+      "user_id": "user_001",
+      "request_type": "gdpr_article_17",
+      "requested_at": "2024-11-14T10:00:00Z",
+      "reason": "User exercised GDPR Right to Erasure"
+    },
+    {
+      "request_id": "del_tenant_b_us_user_456_1699920000",
+      "tenant_id": "tenant_b_us",
+      "user_id": "user_456",
+      "request_type": "ccpa_deletion",
+      "requested_at": "2024-11-15T14:30:00Z",
+      "reason": "CCPA consumer deletion request"
+    },
+    {
+      "request_id": "del_tenant_c_in_user_789_1699920000",
+      "tenant_id": "tenant_c_in",
+      "user_id": "user_789",
+      "request_type": "dpdpa_deletion",
+      "requested_at": "2024-11-16T08:15:00Z",
+      "reason": "DPDPA data principal deletion request"
+    }
+  ],
+  "legal_hold_scenarios": [
+    {
+      "tenant_id": "tenant_e_financial",
+      "legal_hold_active": true,
+      "legal_hold_reason": "SEC Investigation: Case #2024-SEC-98765",
+      "legal_hold_start_date": "2024-10-01T00:00:00Z",
+      "expected_duration_months": 12,
+      "legal_counsel": "Skadden Arps LLP",
+      "affected_users": 127,
+      "affected_documents": 45000
+    },
+    {
+      "tenant_id": "tenant_a_eu",
+      "legal_hold_active": true,
+      "legal_hold_reason": "Litigation: Smith vs. ACME Corp (Case #2024-CV-12345)",
+      "legal_hold_start_date": "2024-09-15T00:00:00Z",
+      "expected_duration_months": 18,
+      "legal_counsel": "Clifford Chance",
+      "affected_users": 5,
+      "affected_documents": 2300
+    }
+  ],
+  "metadata": {
+    "source": "L3_M12_Compliance_Boundaries_Script_Examples",
+    "purpose": "demonstration_and_testing",
+    "version": "1.0.0",
+    "generated_at": "2025-11-18T00:00:00Z",
+    "regulations_covered": ["GDPR", "CCPA", "DPDPA", "SOX", "HIPAA", "PCI-DSS", "FINRA"],
+    "total_tenants": 5,
+    "total_deletion_requests": 3,
+    "total_legal_holds": 2
+  }
+}

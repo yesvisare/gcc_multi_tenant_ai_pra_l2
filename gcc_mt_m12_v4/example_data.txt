@@ -1,0 +1,257 @@
+L3 M12.4: Compliance Boundaries & Data Governance - Example Data
+
+===== TENANT COMPLIANCE CONFIGURATIONS =====
+
+Tenant A (EU): ACME Corp EU Division
+- Regulations: GDPR, SOX
+- Retention: 90 days (GDPR Article 5(e) storage limitation)
+- Residency: EU
+- Auto-delete: Enabled
+- Legal hold: Not active
+
+Tenant B (US): TechStart Inc US
+- Regulations: CCPA, SOX
+- Retention: 2555 days (7 years - SOX Section 404 requirement)
+- Residency: US
+- Auto-delete: Enabled
+- Legal hold: Not active
+
+Tenant C (India): Mumbai Finance Services
+- Regulations: DPDPA, PCI-DSS
+- Retention: 180 days (DPDPA data minimization)
+- Residency: IN (India data localization)
+- Auto-delete: Enabled
+- Legal hold: Not active
+
+Tenant D (Healthcare): HealthCare Global
+- Regulations: HIPAA, GDPR
+- Retention: 2190 days (6 years - HIPAA medical records)
+- Residency: US
+- Auto-delete: Disabled (manual approval required for PHI deletion)
+- Legal hold: Not active
+
+Tenant E (Financial): Global Investment Bank
+- Regulations: SOX, FINRA, GDPR
+- Retention: 2555 days (7 years - SEC Rule 17a-4)
+- Residency: GLOBAL
+- Encryption: RSA-4096 (enhanced for financial data)
+- Auto-delete: Disabled (manual approval by Compliance Officer)
+- Legal hold: Not active
+
+===== GDPR ARTICLE 17 DELETION REQUEST SCENARIOS =====
+
+Scenario 1: EU User Exercises Right to Erasure
+- Tenant: tenant_a_eu (ACME Corp EU Division)
+- User: user_001
+- Request type: GDPR Article 17
+- SLA: 30 days
+- Systems to delete from: Pinecone (vector DB), S3, PostgreSQL, Redis, logs, backups, CloudFront CDN
+- Verification: 48 hours post-deletion
+
+Scenario 2: CCPA Consumer Deletion Request
+- Tenant: tenant_b_us (TechStart Inc US)
+- User: user_456
+- Request type: CCPA deletion
+- SLA: Without undue delay (typically 45 days)
+- Special considerations: Must notify third-party processors (Mixpanel, Segment)
+
+Scenario 3: DPDPA Data Principal Request
+- Tenant: tenant_c_in (Mumbai Finance Services)
+- User: user_789
+- Request type: DPDPA deletion
+- Data residency: Must confirm data was stored in India
+- Verification: Check cross-border transfer logs
+
+===== LEGAL HOLD SCENARIOS (DELETION BLOCKED) =====
+
+Scenario 1: SEC Investigation
+- Tenant: tenant_e_financial (Global Investment Bank)
+- Legal hold active: Yes
+- Reason: SEC Investigation Case #2024-SEC-98765
+- Start date: October 1, 2024
+- Expected duration: 12 months
+- Affected users: 127
+- Affected documents: 45,000
+- Legal counsel: Skadden Arps LLP
+- Action: ALL deletion requests REJECTED until hold lifted
+
+Scenario 2: Litigation
+- Tenant: tenant_a_eu (ACME Corp EU Division)
+- Legal hold active: Yes
+- Reason: Smith vs. ACME Corp (Case #2024-CV-12345)
+- Start date: September 15, 2024
+- Expected duration: 18 months
+- Affected users: 5
+- Affected documents: 2,300
+- Legal counsel: Clifford Chance
+- Action: Deletion blocked - evidence preservation required
+
+===== SCHEDULED DELETION JOB EXAMPLES =====
+
+Daily Execution (2am UTC):
+
+Tenant A (90-day retention):
+- Cutoff date: Current date - 90 days
+- Expected deletions: ~500 documents, ~2,000 vectors
+- Systems: 7 (vector_db, s3, postgresql, redis, logs, backups, cdn)
+- Verification: 48 hours later
+- Audit trail: Logged to compliance_audit_trail table
+
+Tenant B (2555-day retention):
+- Cutoff date: Current date - 2555 days (7 years)
+- Expected deletions: ~100 old financial records
+- Legal hold check: Triple verification before deletion
+- Manual approval: Required for SOX-regulated data
+
+Tenant C (180-day retention):
+- Cutoff date: Current date - 180 days
+- Data residency verification: Confirm all data in India region
+- Expected deletions: ~300 documents
+- Third-party notification: Payment processors (PCI-DSS requirement)
+
+===== MULTI-SYSTEM CASCADE DELETION WORKFLOW =====
+
+Step 1: Legal hold check (3 sources)
+  - Compliance config table: legal_hold_active = FALSE
+  - Legal holds tracking system: No active holds
+  - External legal system API: No litigation flags
+  âœ" PROCEED
+
+Step 2: Auto-delete enabled check
+  - Tenant config: auto_delete_enabled = TRUE
+  âœ" PROCEED
+
+Step 3: Calculate cutoff date
+  - Current date: 2024-11-18
+  - Retention days: 90
+  - Cutoff date: 2024-08-20
+  âœ" All data before 2024-08-20 marked for deletion
+
+Step 4: Cascade delete across 7 systems
+  4a. Vector DB (Pinecone):
+      - Namespace: tenant_a_eu
+      - Filter: created_at < 2024-08-20
+      - Deleted: 1,847 vectors
+      - Status: âœ" SUCCESS
+
+  4b. S3 (AWS):
+      - Prefix: tenant_a_eu/
+      - Filter: LastModified < 2024-08-20
+      - Batch size: 1,000 objects/API call
+      - Deleted: 523 objects
+      - Status: âœ" SUCCESS
+
+  4c. PostgreSQL:
+      - Table: user_documents
+      - Filter: tenant_id = 'tenant_a_eu' AND created_at < '2024-08-20'
+      - CASCADE: Related records in document_chunks, embeddings
+      - Deleted: 523 rows
+      - Status: âœ" SUCCESS
+
+  4d. Redis:
+      - Pattern: tenant_a_eu:*
+      - Deleted: 234 cache keys
+      - Status: âœ" SUCCESS
+
+  4e. Logs (anonymization, not deletion):
+      - Replace PII with <REDACTED>
+      - Log entries: 5,000 anonymized
+      - Status: âœ" SUCCESS
+
+  4f. Backups:
+      - Marked for deletion in next backup cycle
+      - Backup verification job: Scheduled
+      - Status: âœ" MARKED
+
+  4g. CloudFront CDN:
+      - Invalidation path: /tenant_a_eu/*
+      - Invalidation ID: I3XXXXXXXX
+      - Status: âœ" SUCCESS
+
+Step 5: Log to immutable audit trail
+  - Event type: scheduled_deletion_executed
+  - Tenant: tenant_a_eu
+  - Cutoff date: 2024-08-20
+  - Results: {vector_db: 1847, s3: 523, postgresql: 523, redis: 234, ...}
+  - Audit trail ID: aud_a1b2c3d4e5f6
+  - Retention: 2555 days (7 years) - NEVER DELETED
+
+Step 6: Verification (48 hours later)
+  - Independent verification job runs: 2024-11-20 at 2am UTC
+  - Checks: Data actually deleted from all 7 systems
+  - Verification status: âœ" PASSED
+  - Audit trail updated: verification_passed
+
+===== FAILURE SCENARIOS AND REMEDIATION =====
+
+Failure 1: Partial Deletion
+  Problem: Vector DB deleted, S3 deleted, PostgreSQL down
+  Impact: GDPR violation (data still exists)
+  Fix: Per-system status tracking, retry tomorrow, alert ops
+
+Failure 2: Legal Hold Not Checked
+  Problem: Litigation active, scheduled job deletes anyway
+  Impact: Evidence destruction (federal crime)
+  Fix: Triple-check legal hold from 3 sources before ANY deletion
+
+Failure 3: Backup Restore Brings Data Back
+  Problem: Data deleted from production, backup restore resurfaces data
+  Impact: GDPR violation (user's "forgotten" data returns)
+  Fix: Mark backups for deletion, verification job checks backup_metadata
+
+Failure 4: Third-Party Systems Not Notified
+  Problem: Data deleted from primary systems, Mixpanel/Segment still have it
+  Impact: GDPR violation (processor retains without authorization)
+  Fix: Maintain processor inventory, automated deletion notifications
+
+Failure 5: No Verification (False Confidence)
+  Problem: Deletion logged as success, but data still exists
+  Impact: Regulatory violation + loss of audit credibility
+  Fix: Separate verification job 48 hours post-deletion
+
+===== REGULATORY COMPLIANCE REQUIREMENTS =====
+
+GDPR (EU):
+- Article 17: Right to Erasure (30-day SLA)
+- Article 5(e): Storage limitation principle
+- Article 30: Records of processing (7-year audit trail)
+- Fine: €20M or 4% global revenue (whichever higher)
+
+CCPA (California):
+- Right to Delete: Without undue delay
+- Opt-out rights
+- Fine: $7,500 per violation
+
+DPDPA (India):
+- Data localization requirements
+- Explicit consent for processing
+- Maximum fine: ₹250 crore (~$30M USD)
+
+SOX (US):
+- Section 404: Financial controls documentation
+- Record retention: 7 years (SEC Rule 17a-4)
+- Audit trail: Immutable logs
+
+HIPAA (Healthcare):
+- PHI protection requirements
+- Breach notification: 60 days
+- Retention: 6 years (medical records)
+
+===== COST BREAKDOWN (GCC EXAMPLE) =====
+
+Small GCC (20 tenants):
+- Celery workers: ₹2,000/month
+- Audit log storage: ₹3,000/month
+- Deletion API calls: ₹500/month
+- DPO time (20% FTE): ₹10,000/month
+- Total: ₹15,000/month (₹750/tenant)
+
+Medium GCC (50 tenants):
+- Celery workers: ₹5,000/month
+- Audit log storage: ₹10,000/month
+- Deletion API calls: ₹2,000/month
+- DPO time (100% FTE): ₹35,000/month
+- Total: ₹50,000/month (₹1,000/tenant)
+
+ROI: ₹10,000/month savings vs. manual deletion
+Audit-ready evidence: < 24 hours to produce

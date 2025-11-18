@@ -1,0 +1,39 @@
+# Core dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+python-dotenv==1.0.0
+pytest==7.4.4
+
+# Web framework
+pydantic[email]==2.5.3
+
+# Logging and utilities
+structlog==24.1.0
+
+# Database
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+
+# Task queue
+celery==5.3.4
+redis==5.0.1
+
+# SERVICE-specific dependencies (from script Section 4)
+
+# Pinecone (PRIMARY SERVICE) - Vector database
+pinecone-client==3.0.0
+
+# AWS (SECONDARY SERVICE) - S3 + CloudFront
+boto3==1.34.0
+
+# Jupyter notebook
+jupyter==1.0.0
+jupyterlab==4.0.9
+ipykernel==6.27.1
+matplotlib==3.8.2
+pandas==2.1.4
+
+# Testing
+pytest-asyncio==0.23.2
+httpx==0.26.0

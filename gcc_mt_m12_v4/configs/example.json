@@ -1,0 +1,32 @@
+{
+  "tenant_compliance_examples": [
+    {
+      "tenant_id": "example_tenant_001",
+      "tenant_name": "Example Corporation",
+      "tenant_email": "dpo@example.com",
+      "regulations": ["GDPR"],
+      "retention_days": 90,
+      "data_residency": "EU"
+    }
+  ],
+  "settings": {
+    "scheduled_deletion_time": "02:00:00",
+    "verification_delay_hours": 48,
+    "max_retries": 3,
+    "retry_delays_minutes": [1, 5, 15]
+  },
+  "systems": {
+    "vector_db": {
+      "provider": "pinecone",
+      "namespace_pattern": "tenant_{tenant_id}"
+    },
+    "object_storage": {
+      "provider": "s3",
+      "prefix_pattern": "tenant_{tenant_id}/"
+    },
+    "cache": {
+      "provider": "redis",
+      "key_pattern": "tenant_{tenant_id}:*"
+    }
+  }
+}
