@@ -1,0 +1,141 @@
+L3 M14.1: Multi-Tenant Monitoring & Observability - Example Data
+
+================================================================================
+PROMETHEUS EXPOSITION FORMAT EXAMPLES
+================================================================================
+
+# HELP rag_queries_total Total number of RAG queries processed
+# TYPE rag_queries_total counter
+rag_queries_total{tenant_id="finance-team",status="success"} 10250
+rag_queries_total{tenant_id="finance-team",status="error"} 15
+rag_queries_total{tenant_id="marketing-team",status="success"} 8900
+rag_queries_total{tenant_id="marketing-team",status="error"} 8
+
+# HELP rag_query_duration_seconds RAG query duration in seconds
+# TYPE rag_query_duration_seconds histogram
+rag_query_duration_seconds{tenant_id="finance-team"} 2.0
+rag_query_duration_seconds{tenant_id="marketing-team"} 0.05
+
+# HELP rag_active_queries Number of queries currently in progress
+# TYPE rag_active_queries gauge
+rag_active_queries{tenant_id="finance-team"} 3
+rag_active_queries{tenant_id="marketing-team"} 1
+
+================================================================================
+LOG ENTRY WITH TENANT CONTEXT
+================================================================================
+
+{
+  "timestamp": "2025-11-18T10:30:00Z",
+  "level": "INFO",
+  "tenant_id": "finance-team",
+  "message": "Query completed successfully",
+  "duration_seconds": 1.5,
+  "docs_retrieved": 5,
+  "llm_tokens": 1200
+}
+
+{
+  "timestamp": "2025-11-18T10:35:00Z",
+  "level": "ERROR",
+  "tenant_id": "engineering-team",
+  "message": "Query failed",
+  "error": "timeout",
+  "duration_seconds": 0.3
+}
+
+================================================================================
+TENANT INFO METRIC
+================================================================================
+
+rag_tenant{tenant_id="finance-team", name="Finance Department", tier="premium"}
+rag_tenant{tenant_id="marketing-team", name="Marketing Department", tier="standard"}
+rag_tenant{tenant_id="engineering-team", name="Engineering Team", tier="free"}
+
+================================================================================
+QUOTA USAGE EXAMPLES
+================================================================================
+
+Tenant: finance-team
+- Queries: 7500 / 10000 (75%)
+- Tokens: 750000 / 1000000 (75%)
+- Storage: 45 GB / 50 GB (90%)
+
+Tenant: marketing-team
+- Queries: 2500 / 5000 (50%)
+- Tokens: 250000 / 500000 (50%)
+- Storage: 10 GB / 20 GB (50%)
+
+================================================================================
+CARDINALITY MANAGEMENT EXAMPLES
+================================================================================
+
+SAFE (50 tenants × 2 statuses = 100 time series):
+rag_queries_total{tenant_id="finance-team", status="success"}
+rag_queries_total{tenant_id="finance-team", status="error"}
+rag_queries_total{tenant_id="marketing-team", status="success"}
+...
+
+UNSAFE (50 tenants × 10K users × 100K queries = 50 billion time series):
+rag_queries_total{tenant_id="finance-team", user_id="user123", query_id="q456"}
+⚠️ CARDINALITY EXPLOSION - DO NOT USE
+
+================================================================================
+GRAFANA QUERY EXAMPLES (PromQL)
+================================================================================
+
+# Per-tenant query rate (queries/sec):
+rate(rag_queries_total{tenant_id="finance-team"}[5m])
+
+# Per-tenant success rate:
+sum(rate(rag_queries_total{status="success"}[5m])) by (tenant_id)
+/
+sum(rate(rag_queries_total[5m])) by (tenant_id)
+
+# Per-tenant p99 latency:
+histogram_quantile(0.99, rate(rag_query_duration_seconds_bucket[5m]))
+
+# Tenants exceeding 90% quota:
+rag_quota_usage_percent > 90
+
+================================================================================
+FAILURE DETECTION PATTERNS
+================================================================================
+
+1. Averaging Blindness Detection:
+   - Alert: avg(rag_success_rate) by (tenant_id) < 0.95
+   - Result: Identifies individual failing tenants hidden by global average
+
+2. Resource Monopolization Detection:
+   - Alert: sum(rate(rag_active_queries[1m])) by (tenant_id) > 100
+   - Result: Flags tenants consuming excessive resources
+
+3. Latency Masking Detection:
+   - Alert: histogram_quantile(0.99, rag_query_duration_seconds_bucket) > 5
+   - Result: Catches outlier latency per tenant
+
+4. SLA Violation Detection:
+   - Alert: rag_quota_usage_percent{resource_type="queries"} > 100
+   - Result: Immediate notification when tenant exceeds quota
+
+================================================================================
+OPENTELEMETRY TRACE CONTEXT EXAMPLE
+================================================================================
+
+Trace ID: 1234567890abcdef
+Span: RAG Query Execution
+  - tenant_id: finance-team
+  - query: "What were Q4 revenue projections?"
+  - duration: 2.0s
+
+Child Span: Vector Search
+  - tenant_id: finance-team
+  - collection: finance-docs
+  - results: 5 documents
+  - duration: 0.3s
+
+Child Span: LLM Generation
+  - tenant_id: finance-team
+  - model: gpt-4
+  - tokens: 1200
+  - duration: 1.5s

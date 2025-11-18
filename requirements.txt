@@ -1,0 +1,25 @@
+# Core dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+python-dotenv==1.0.0
+pytest==7.4.4
+
+# Logging and utilities
+structlog==24.1.0
+
+# Prometheus metrics collection
+prometheus-client==0.19.0
+
+# Jupyter for notebooks
+jupyter==1.0.0
+jupyterlab==4.0.11
+ipykernel==6.28.0
+matplotlib==3.8.2
+pandas==2.1.4
+
+# Optional: OpenTelemetry instrumentation (for advanced tracing)
+# Uncomment if implementing distributed tracing
+# opentelemetry-api==1.22.0
+# opentelemetry-sdk==1.22.0
+# opentelemetry-instrumentation-fastapi==0.43b0

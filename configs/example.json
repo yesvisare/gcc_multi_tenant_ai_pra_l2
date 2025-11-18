@@ -1,0 +1,29 @@
+{
+  "tenants": [
+    {
+      "tenant_id": "finance-team",
+      "name": "Finance Department",
+      "tier": "premium",
+      "quotas": {
+        "queries_per_month": 10000,
+        "tokens_per_month": 1000000,
+        "storage_gb": 50
+      }
+    },
+    {
+      "tenant_id": "marketing-team",
+      "name": "Marketing Department",
+      "tier": "standard",
+      "quotas": {
+        "queries_per_month": 5000,
+        "tokens_per_month": 500000,
+        "storage_gb": 20
+      }
+    }
+  ],
+  "settings": {
+    "prometheus_scrape_interval": "15s",
+    "alert_evaluation_interval": "30s",
+    "metric_retention_days": 15
+  }
+}

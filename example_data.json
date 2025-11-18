@@ -1,0 +1,123 @@
+{
+  "sample_queries": [
+    {
+      "tenant_id": "finance-team",
+      "query": "What were our Q4 revenue projections?",
+      "status": "success",
+      "duration_seconds": 2.0,
+      "docs_retrieved": 5,
+      "llm_tokens": 1200,
+      "timestamp": "2025-11-18T10:30:00Z"
+    },
+    {
+      "tenant_id": "finance-team",
+      "query": "Show me the latest budget allocations",
+      "status": "success",
+      "duration_seconds": 1.5,
+      "docs_retrieved": 3,
+      "llm_tokens": 800,
+      "timestamp": "2025-11-18T10:35:00Z"
+    },
+    {
+      "tenant_id": "marketing-team",
+      "query": "Retrieve campaign performance metrics",
+      "status": "success",
+      "duration_seconds": 0.8,
+      "docs_retrieved": 4,
+      "llm_tokens": 600,
+      "timestamp": "2025-11-18T10:32:00Z"
+    },
+    {
+      "tenant_id": "marketing-team",
+      "query": "What are our top-performing channels?",
+      "status": "success",
+      "duration_seconds": 1.2,
+      "docs_retrieved": 6,
+      "llm_tokens": 950,
+      "timestamp": "2025-11-18T10:38:00Z"
+    },
+    {
+      "tenant_id": "engineering-team",
+      "query": "Find all API documentation for authentication",
+      "status": "error",
+      "duration_seconds": 0.3,
+      "docs_retrieved": 0,
+      "llm_tokens": 0,
+      "error": "timeout",
+      "timestamp": "2025-11-18T10:40:00Z"
+    },
+    {
+      "tenant_id": "sales-team",
+      "query": "Who are our top customers by revenue?",
+      "status": "success",
+      "duration_seconds": 5.0,
+      "docs_retrieved": 12,
+      "llm_tokens": 2400,
+      "timestamp": "2025-11-18T10:45:00Z"
+    }
+  ],
+  "prometheus_samples": {
+    "description": "Example Prometheus exposition format",
+    "metrics": [
+      "# HELP rag_queries_total Total number of RAG queries processed",
+      "# TYPE rag_queries_total counter",
+      "rag_queries_total{tenant_id=\"finance-team\",status=\"success\"} 10250",
+      "rag_queries_total{tenant_id=\"finance-team\",status=\"error\"} 15",
+      "rag_queries_total{tenant_id=\"marketing-team\",status=\"success\"} 8900",
+      "rag_queries_total{tenant_id=\"marketing-team\",status=\"error\"} 8",
+      "",
+      "# HELP rag_query_duration_seconds RAG query duration in seconds",
+      "# TYPE rag_query_duration_seconds histogram",
+      "rag_query_duration_seconds_bucket{tenant_id=\"finance-team\",le=\"0.1\"} 120",
+      "rag_query_duration_seconds_bucket{tenant_id=\"finance-team\",le=\"0.5\"} 4500",
+      "rag_query_duration_seconds_bucket{tenant_id=\"finance-team\",le=\"1.0\"} 8200",
+      "rag_query_duration_seconds_bucket{tenant_id=\"finance-team\",le=\"2.0\"} 9800",
+      "rag_query_duration_seconds_bucket{tenant_id=\"finance-team\",le=\"+Inf\"} 10265",
+      "rag_query_duration_seconds_sum{tenant_id=\"finance-team\"} 12500.5",
+      "rag_query_duration_seconds_count{tenant_id=\"finance-team\"} 10265"
+    ]
+  },
+  "quota_examples": [
+    {
+      "tenant_id": "finance-team",
+      "resource_type": "queries",
+      "usage_percent": 75.0,
+      "used": 7500,
+      "limit": 10000
+    },
+    {
+      "tenant_id": "marketing-team",
+      "resource_type": "tokens",
+      "usage_percent": 50.0,
+      "used": 250000,
+      "limit": 500000
+    }
+  ],
+  "failure_scenarios": [
+    {
+      "scenario": "Averaging Blindness",
+      "description": "Platform shows 99% success; one tenant actually at 80% (others at 100%)",
+      "detection": "Per-tenant success rate query in Grafana"
+    },
+    {
+      "scenario": "Resource Monopolization",
+      "description": "One tenant consuming 40% CPU, causing slowness for 49 others",
+      "detection": "CPU usage histogram bucketed by tenant_id"
+    },
+    {
+      "scenario": "Latency Masking",
+      "description": "Global 545ms average hides 5000ms outlier tenant",
+      "detection": "Per-tenant p99 latency alerts"
+    },
+    {
+      "scenario": "Cardinality Explosion",
+      "description": "Labeling by {tenant_id, user_id, query_id} creates billions of time series",
+      "detection": "Monitor cardinality; limit labels to tenant_id only"
+    },
+    {
+      "scenario": "SLA Violation Detection Delay",
+      "description": "Without per-tenant error budgets, discovering violation takes 45+ minutes",
+      "detection": "Per-tenant error budget alerts fire within 3 minutes"
+    }
+  ]
+}
