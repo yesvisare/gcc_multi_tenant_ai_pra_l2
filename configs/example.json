@@ -1,0 +1,162 @@
+{
+  "provisioning_config": {
+    "default_region": "us-east-1",
+    "default_tier": "Silver",
+    "auto_approve_threshold_inr": 1000000,
+    "validation_timeout_seconds": 300,
+    "query_performance_sla_ms": 500
+  },
+  "tier_configurations": {
+    "Gold": {
+      "features": {
+        "advanced_search": true,
+        "real_time_indexing": true,
+        "custom_models": true,
+        "batch_processing": true,
+        "api_access": true
+      },
+      "rate_limits": {
+        "queries_per_minute": 1000,
+        "documents_per_month": 100000
+      },
+      "llm_config": {
+        "model": "gpt-4",
+        "max_tokens": 4096,
+        "temperature": 0.7
+      },
+      "demo_documents": true
+    },
+    "Silver": {
+      "features": {
+        "advanced_search": false,
+        "real_time_indexing": true,
+        "custom_models": false,
+        "batch_processing": true,
+        "api_access": true
+      },
+      "rate_limits": {
+        "queries_per_minute": 500,
+        "documents_per_month": 50000
+      },
+      "llm_config": {
+        "model": "gpt-3.5-turbo",
+        "max_tokens": 2048,
+        "temperature": 0.7
+      },
+      "demo_documents": false
+    },
+    "Bronze": {
+      "features": {
+        "advanced_search": false,
+        "real_time_indexing": false,
+        "custom_models": false,
+        "batch_processing": true,
+        "api_access": true
+      },
+      "rate_limits": {
+        "queries_per_minute": 100,
+        "documents_per_month": 10000
+      },
+      "llm_config": {
+        "model": "gpt-3.5-turbo",
+        "max_tokens": 1024,
+        "temperature": 0.7
+      },
+      "demo_documents": false
+    }
+  },
+  "infrastructure_defaults": {
+    "postgresql": {
+      "enable_rls": true,
+      "connection_pooling": true,
+      "max_connections": 100
+    },
+    "vector_db": {
+      "type": "pinecone",
+      "dimension": 1536,
+      "metric": "cosine"
+    },
+    "s3": {
+      "storage_class": "STANDARD_IA",
+      "versioning": true,
+      "encryption": "AES256"
+    },
+    "redis": {
+      "ttl_seconds": 3600,
+      "max_memory_policy": "allkeys-lru"
+    },
+    "monitoring": {
+      "grafana_enabled": true,
+      "prometheus_scrape_interval": "15s",
+      "alert_thresholds": {
+        "query_latency_ms": 500,
+        "error_rate_percent": 5,
+        "cpu_usage_percent": 80
+      }
+    }
+  },
+  "validation_suite": {
+    "tests": [
+      {
+        "name": "database_connectivity",
+        "timeout_seconds": 30,
+        "critical": true
+      },
+      {
+        "name": "tenant_isolation",
+        "timeout_seconds": 60,
+        "critical": true
+      },
+      {
+        "name": "vector_search",
+        "timeout_seconds": 45,
+        "critical": true
+      },
+      {
+        "name": "jwt_authentication",
+        "timeout_seconds": 15,
+        "critical": true
+      },
+      {
+        "name": "query_performance",
+        "timeout_seconds": 120,
+        "critical": true,
+        "sla_ms": 500
+      },
+      {
+        "name": "s3_permissions",
+        "timeout_seconds": 30,
+        "critical": false
+      },
+      {
+        "name": "metrics_collection",
+        "timeout_seconds": 20,
+        "critical": false
+      },
+      {
+        "name": "cost_tags",
+        "timeout_seconds": 15,
+        "critical": false
+      }
+    ],
+    "retry_policy": {
+      "max_retries": 3,
+      "backoff_seconds": 5
+    }
+  },
+  "notification_settings": {
+    "channels": ["email", "slack"],
+    "events": [
+      "provisioning_started",
+      "provisioning_completed",
+      "provisioning_failed",
+      "validation_failed",
+      "rollback_triggered",
+      "approval_required"
+    ],
+    "recipients": {
+      "platform_team": ["platform@gcc.example.com"],
+      "finance_team": ["cfo@gcc.example.com"]
+    }
+  }
+}

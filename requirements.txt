@@ -1,0 +1,41 @@
+# Core dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+python-dotenv==1.0.0
+pytest==7.4.4
+
+# Async support
+asyncio==3.4.3
+
+# Logging and utilities
+structlog==24.1.0
+
+# AWS Infrastructure (for provisioning)
+boto3==1.34.34
+botocore==1.34.34
+
+# Database clients
+psycopg2-binary==2.9.9  # PostgreSQL (for tenant registry and RLS schemas)
+redis==5.0.1  # Redis (for tenant caching namespaces)
+
+# Vector Database clients (choose based on deployment)
+pinecone-client==3.0.0  # Pinecone vector DB
+# qdrant-client==1.7.0  # Alternative: Qdrant vector DB
+# chromadb==0.4.22  # Alternative: Chroma vector DB
+
+# Monitoring and observability
+prometheus-client==0.19.0
+
+# Jupyter notebook support (for interactive walkthrough)
+jupyter==1.0.0
+jupyterlab==4.0.10
+ipykernel==6.28.0
+
+# Testing
+pytest-asyncio==0.23.3
+httpx==0.26.0  # For FastAPI testing
+
+# Notifications (optional)
+# slack-sdk==3.26.2
+# requests==2.31.0

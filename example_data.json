@@ -1,0 +1,143 @@
+{
+  "tenant_provisioning_requests": [
+    {
+      "tenant_name": "Acme Corporation",
+      "tier": "Gold",
+      "region": "us-east-1",
+      "budget": 2000000,
+      "owner_email": "cto@acmecorp.com",
+      "description": "Enterprise tenant with advanced features and GPT-4 access"
+    },
+    {
+      "tenant_name": "TechStart Solutions",
+      "tier": "Silver",
+      "region": "us-west-2",
+      "budget": 500000,
+      "owner_email": "admin@techstart.io",
+      "description": "Standard tenant with real-time indexing"
+    },
+    {
+      "tenant_name": "Local Business Inc",
+      "tier": "Bronze",
+      "region": "us-east-1",
+      "budget": 150000,
+      "owner_email": "it@localbiz.com",
+      "description": "Basic tenant with essential features"
+    },
+    {
+      "tenant_name": "Global Enterprises",
+      "tier": "Gold",
+      "region": "eu-west-1",
+      "budget": 25000000,
+      "owner_email": "cfo@globalenterprises.com",
+      "description": "High-budget tenant requiring CFO approval"
+    },
+    {
+      "tenant_name": "Healthcare Systems",
+      "tier": "Silver",
+      "region": "us-east-1",
+      "budget": 800000,
+      "owner_email": "compliance@healthsys.com",
+      "description": "Healthcare tenant with compliance requirements"
+    },
+    {
+      "tenant_name": "Finance Analytics Co",
+      "tier": "Gold",
+      "region": "ap-south-1",
+      "budget": 1500000,
+      "owner_email": "devops@financeanalytics.in",
+      "description": "India-based tenant for financial document processing"
+    },
+    {
+      "tenant_name": "Education Platform",
+      "tier": "Bronze",
+      "region": "us-west-2",
+      "budget": 200000,
+      "owner_email": "tech@eduplatform.org",
+      "description": "Educational organization with budget constraints"
+    },
+    {
+      "tenant_name": "Retail Chain",
+      "tier": "Silver",
+      "region": "eu-central-1",
+      "budget": 600000,
+      "owner_email": "digital@retailchain.de",
+      "description": "European retail tenant for customer service automation"
+    }
+  ],
+  "validation_scenarios": [
+    {
+      "scenario": "isolation_test",
+      "description": "Verify tenant A cannot access tenant B's data",
+      "tenant_a": "tenant_acme_corporation",
+      "tenant_b": "tenant_techstart_solutions",
+      "expected_result": "access_denied"
+    },
+    {
+      "scenario": "performance_test",
+      "description": "Query latency must be <500ms",
+      "tenant": "tenant_global_enterprises",
+      "query": "What are the key risks in our Q4 financial report?",
+      "sla_ms": 500
+    },
+    {
+      "scenario": "cost_tag_verification",
+      "description": "All resources must have TenantID and CostCenter tags",
+      "tenant": "tenant_healthcare_systems",
+      "required_tags": ["TenantID", "CostCenter", "Tier"]
+    }
+  ],
+  "rollback_scenarios": [
+    {
+      "scenario": "terraform_failure",
+      "tenant": "tenant_failed_provision",
+      "failed_step": "infrastructure_provisioning",
+      "error": "Terraform apply failed: VPC subnet conflict",
+      "expected_action": "terraform destroy + registry deletion"
+    },
+    {
+      "scenario": "validation_failure",
+      "tenant": "tenant_isolation_failed",
+      "failed_step": "validation_testing",
+      "error": "Cross-tenant isolation test failed",
+      "expected_action": "rollback all infrastructure changes"
+    }
+  ],
+  "approval_workflow_examples": [
+    {
+      "tenant": "tenant_acme_corporation",
+      "budget": 2000000,
+      "expected_decision": "approved",
+      "approval_type": "automatic",
+      "reason": "Budget below ₹10L threshold"
+    },
+    {
+      "tenant": "tenant_global_enterprises",
+      "budget": 25000000,
+      "expected_decision": "pending_manual_approval",
+      "approval_type": "manual_required",
+      "reason": "Budget exceeds ₹10L, requires CFO approval"
+    }
+  ],
+  "cost_comparison": {
+    "manual_provisioning": {
+      "duration_days": 14,
+      "labor_cost_inr": 50000,
+      "error_rate_percent": 17.5
+    },
+    "automated_provisioning": {
+      "duration_minutes": 15,
+      "infrastructure_cost_inr": 5000,
+      "error_rate_percent": 0.8
+    },
+    "savings_per_tenant_inr": 45000,
+    "savings_for_50_tenants_inr": 2250000
+  },
+  "metadata": {
+    "source": "L3 M11.4 Augmented Script",
+    "purpose": "Demonstration and testing data",
+    "total_examples": 8,
+    "tiers_covered": ["Gold", "Silver", "Bronze"],
+    "regions_covered": ["us-east-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-south-1"]
+  }
+}
