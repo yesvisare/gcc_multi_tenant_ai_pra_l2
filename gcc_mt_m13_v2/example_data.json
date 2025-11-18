@@ -1,0 +1,99 @@
+{
+  "tenants": [
+    {
+      "tenant_id": "finance_corp",
+      "tier": "premium",
+      "typical_queries_per_hour": 500,
+      "peak_queries_per_hour": 2000,
+      "query_examples": [
+        "What were the Q3 earnings for our investment portfolio?",
+        "Summarize regulatory filings for healthcare sector",
+        "Analyze market volatility during trading hours"
+      ]
+    },
+    {
+      "tenant_id": "media_agency",
+      "tier": "standard",
+      "typical_queries_per_hour": 200,
+      "peak_queries_per_hour": 800,
+      "query_examples": [
+        "Find trending topics in social media data",
+        "Summarize news articles about recent events",
+        "Extract key quotes from interview transcripts"
+      ]
+    },
+    {
+      "tenant_id": "retail_chain",
+      "tier": "standard",
+      "typical_queries_per_hour": 150,
+      "peak_queries_per_hour": 1500,
+      "query_examples": [
+        "What are customer sentiment trends for Black Friday?",
+        "Analyze product reviews for electronics category",
+        "Find common complaints in customer support tickets"
+      ]
+    },
+    {
+      "tenant_id": "legal_firm",
+      "tier": "premium",
+      "typical_queries_per_hour": 100,
+      "peak_queries_per_hour": 500,
+      "query_examples": [
+        "Search precedents for contract dispute cases",
+        "Summarize discovery documents for case #12345",
+        "Find relevant clauses in merger agreements"
+      ]
+    },
+    {
+      "tenant_id": "startup_pilot",
+      "tier": "free",
+      "typical_queries_per_hour": 20,
+      "peak_queries_per_hour": 100,
+      "query_examples": [
+        "Analyze user feedback for product features",
+        "Search technical documentation for API usage",
+        "Find best practices in competitor analysis"
+      ]
+    }
+  ],
+  "scaling_scenarios": [
+    {
+      "scenario": "market_open_spike",
+      "description": "Financial markets open at 9:30 AM, causing 5× query spike",
+      "affected_tenants": ["finance_corp", "legal_firm"],
+      "duration_minutes": 60,
+      "expected_scale_up": "5 → 15 pods within 2 minutes"
+    },
+    {
+      "scenario": "breaking_news_event",
+      "description": "Major news event causes 10× spike for media tenants",
+      "affected_tenants": ["media_agency"],
+      "duration_minutes": 30,
+      "expected_scale_up": "3 → 10 pods within 2 minutes"
+    },
+    {
+      "scenario": "black_friday_shopping",
+      "description": "Black Friday causes 30× spike for retail for 48 hours",
+      "affected_tenants": ["retail_chain"],
+      "duration_minutes": 2880,
+      "expected_scale_up": "3 → 15 pods within 2 minutes, sustained for 48 hours"
+    },
+    {
+      "scenario": "business_hours_baseline",
+      "description": "Normal business hours (9 AM - 5 PM) with steady load",
+      "affected_tenants": ["all"],
+      "duration_minutes": 480,
+      "expected_scale_up": "Maintain min_replicas per tier"
+    }
+  ],
+  "metadata": {
+    "total_tenants": 5,
+    "premium_count": 2,
+    "standard_count": 2,
+    "free_count": 1,
+    "total_cluster_capacity": 100,
+    "baseline_cost_per_month_inr": 58000,
+    "peak_cost_per_month_inr": 120000,
+    "avg_savings_vs_fixed_capacity": "30-40%"
+  }
+}

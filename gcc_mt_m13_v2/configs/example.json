@@ -1,0 +1,32 @@
+{
+  "hpa_config": {
+    "min_replicas": 3,
+    "max_replicas": 20,
+    "target_queue_depth": 10,
+    "scale_up_stabilization_seconds": 60,
+    "scale_down_stabilization_seconds": 300
+  },
+  "tenant_tiers": {
+    "premium": {
+      "resource_quota_percent": 40,
+      "sla_target": 0.9995,
+      "monthly_cost_per_pod": 2000
+    },
+    "standard": {
+      "resource_quota_percent": 20,
+      "sla_target": 0.999,
+      "monthly_cost_per_pod": 2000
+    },
+    "free": {
+      "resource_quota_percent": 10,
+      "sla_target": 0.99,
+      "monthly_cost_per_pod": 2000
+    }
+  },
+  "cluster": {
+    "total_capacity_pods": 100,
+    "node_count": 15,
+    "region": "ap-south-1",
+    "availability_zones": ["ap-south-1a", "ap-south-1b", "ap-south-1c"]
+  }
+}

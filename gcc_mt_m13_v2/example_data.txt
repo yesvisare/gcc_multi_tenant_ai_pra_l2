@@ -1,0 +1,101 @@
+Auto-Scaling Multi-Tenant Infrastructure - Example Scenarios
+
+Scenario 1: Premium Tenant Market Open Spike
+------------------------------------------------
+Tenant: finance_corp (Premium tier)
+Time: 9:30 AM ET (market open)
+Baseline: 5 pods, queue depth: 10 queries
+Spike: 500 queries arrive in 2 minutes
+Expected behavior:
+  - T+0s: Queue depth spikes to 500
+  - T+15s: Prometheus scrapes metrics, detects queue_depth=500
+  - T+30s: HPA calculates target: 500/10 = 50 pods, constrained to max=30
+  - T+60s: HPA updates Deployment, scales to 30 pods
+  - T+120s: New pods ready, queue drains
+Result: Queue depth normalizes to <10 within 3 minutes
+
+Scenario 2: Standard Tenant Breaking News
+------------------------------------------------
+Tenant: media_agency (Standard tier)
+Time: 2:47 PM (unexpected breaking news)
+Baseline: 3 pods, queue depth: 5 queries
+Spike: 200 queries in 3 minutes (10× normal load)
+Expected behavior:
+  - T+0s: Queue depth begins climbing
+  - T+60s: Queue depth reaches 100 (HPA detects)
+  - T+90s: HPA calculates target: 100/10 = 10 pods (within max=15)
+  - T+120s: HPA scales to 10 pods
+  - T+180s: Queue drains to normal
+Result: Handled spike without SLA breach, scaled down after 5 min stabilization
+
+Scenario 3: Free Tenant Queue Full (Backpressure)
+------------------------------------------------
+Tenant: startup_pilot (Free tier)
+Baseline: 1 pod, queue depth: 80 (approaching limit)
+Spike: 30 more queries arrive
+Expected behavior:
+  - T+0s: Queue depth at 80/100
+  - T+10s: 30 queries enqueued, queue depth reaches 100 (FULL)
+  - T+11s: Next query returns HTTP 429 "Queue Full"
+  - T+15s: HPA detects queue_depth=100
+  - T+60s: HPA scales to target: 100/10 = 10, constrained to max=5
+  - T+120s: Scaled to 5 pods, queue begins draining
+Result: Backpressure mechanism prevents overload, HPA scales within tier limits
+
+Scenario 4: Quota Enforcement
+------------------------------------------------
+Tenant: finance_corp (Premium tier, 40% quota)
+Cluster capacity: 100 pods
+Current usage: Premium=30 pods, Standard=20 pods, Free=5 pods
+Attempt: finance_corp tries to scale to 50 pods
+Expected behavior:
+  - HPA requests 50 pods for finance_corp
+  - Quota validation: 50/100 = 50% > 40% quota → REJECTED
+  - HPA constrained to 40 pods (40% of 100)
+  - ResourceQuota enforced at Kubernetes level
+Result: No tenant can monopolize cluster resources
+
+Scenario 5: Graceful Scale-Down
+------------------------------------------------
+Tenant: retail_chain (Standard tier)
+Current: 15 pods after Black Friday peak
+Post-peak: Queue depth drops to 10 queries
+Expected behavior:
+  - T+0s: Peak ends, queue_depth drops from 150 → 10
+  - T+300s: HPA stabilization window expires (5 min)
+  - T+300s: HPA calculates target: 10/10 = 1, constrained to min=3
+  - T+360s: HPA scales down by 10% = 15 → 13 pods
+  - T+420s: HPA scales down 10% = 13 → 12 pods
+  - ... (gradual scale-down)
+  - T+900s: Reaches min=3 pods
+  - SIGTERM sent to pods being terminated
+  - Pods drain connections for 30 seconds
+  - No queries dropped
+Result: Cost savings without SLA impact
+
+Scenario 6: Multi-Tenant Fairness
+------------------------------------------------
+Situation: 3 tenants with different loads
+  - Tenant A (Premium): 200 queries queued
+  - Tenant B (Standard): 50 queries queued
+  - Tenant C (Free): 10 queries queued
+Shared cluster: 50 pods available
+Without fairness: All pods might process Tenant A's backlog
+With fairness (separate queues):
+  - Tenant A gets: 5-30 pods (premium tier)
+  - Tenant B gets: 3-15 pods (standard tier)
+  - Tenant C gets: 1-5 pods (free tier)
+  - HPA scales each tenant independently
+Result: All tenants meet SLAs, no noisy neighbor problem
+
+Scenario 7: Cost Attribution
+------------------------------------------------
+Monthly usage report for finance_corp:
+  - Average replicas: 12 pods/month
+  - Peak replicas: 28 pods (during market volatility)
+  - Pod cost: ₹2,000/pod/month
+  - Actual cost: 12 × ₹2,000 = ₹24,000
+  - Budget: ₹30,000
+  - Variance: -₹6,000 (20% under budget)
+  - Savings vs fixed capacity (28 pods): ₹32,000 saved
+Report delivered to CFO: Transparent per-tenant chargeback
