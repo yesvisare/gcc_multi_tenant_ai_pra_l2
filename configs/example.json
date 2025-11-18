@@ -1,0 +1,63 @@
+{
+  "tenant_tiers": {
+    "bronze": {
+      "queries_per_minute": 100,
+      "priority": 1,
+      "min_allocation_pct": 10,
+      "cost_per_month_inr": 1500
+    },
+    "silver": {
+      "queries_per_minute": 500,
+      "priority": 2,
+      "min_allocation_pct": 15,
+      "cost_per_month_inr": 5000
+    },
+    "gold": {
+      "queries_per_minute": 2000,
+      "priority": 3,
+      "min_allocation_pct": 25,
+      "cost_per_month_inr": 15000
+    }
+  },
+  "noisy_neighbor_config": {
+    "high_severity_threshold_multiplier": 3,
+    "critical_severity_threshold_multiplier": 5,
+    "detection_window_seconds": 30,
+    "mitigation_delay_seconds": 60,
+    "circuit_breaker_duration_seconds": 300,
+    "rate_reduction_percentage": 50
+  },
+  "notification_channels": {
+    "slack": {
+      "enabled": false,
+      "webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+      "mention_oncall": true
+    },
+    "email": {
+      "enabled": false,
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "from_address": "alerts@yourcompany.com",
+      "admin_addresses": [
+        "ops-team@yourcompany.com",
+        "platform-oncall@yourcompany.com"
+      ]
+    }
+  },
+  "redis_config": {
+    "url": "redis://localhost:6379/0",
+    "max_connections": 50,
+    "key_prefix": "rate_limit",
+    "ttl_seconds": 60
+  },
+  "postgres_config": {
+    "connection_string": "postgresql://user:password@localhost:5432/tenants",
+    "max_connections": 20,
+    "cache_ttl_seconds": 300
+  },
+  "prometheus_config": {
+    "enabled": false,
+    "port": 8001,
+    "metrics_path": "/metrics"
+  }
+}

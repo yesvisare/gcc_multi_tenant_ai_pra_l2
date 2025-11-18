@@ -1,0 +1,35 @@
+# Core dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+python-dotenv==1.0.0
+pytest==7.4.4
+
+# Logging and utilities
+structlog==24.1.0
+
+# Redis for rate limiting (token bucket)
+redis==5.0.1
+aioredis==2.0.1
+
+# PostgreSQL for tenant configuration
+asyncpg==0.29.0
+psycopg2-binary==2.9.9
+
+# Prometheus metrics
+prometheus-client==0.19.0
+
+# HTTP client for notifications
+httpx==0.26.0
+
+# Data validation
+pydantic-settings==2.1.0
+
+# Testing
+pytest-asyncio==0.23.3
+pytest-mock==3.12.0
+fakeredis==2.21.0
+
+# Notebook support
+jupyter==1.0.0
+ipykernel==6.29.0

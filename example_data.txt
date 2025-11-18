@@ -1,0 +1,84 @@
+Example Tenant Query Patterns for Rate Limiting Testing
+
+Bronze Tier (100 QPM limit):
+- tenant_bronze_internal_analytics
+- tenant_bronze_hr_reports
+- tenant_bronze_finance_monthly
+
+Silver Tier (500 QPM limit):
+- tenant_silver_customer_portal
+- tenant_silver_sales_dashboard
+- tenant_silver_product_analytics
+
+Gold Tier (2000 QPM limit):
+- tenant_gold_customer_service
+- tenant_gold_live_trading
+- tenant_gold_fraud_detection
+
+Sample Query Flows:
+
+Normal Traffic Pattern (Bronze):
+T+0s: 10 queries (dashboard load)
+T+60s: 8 queries (user interactions)
+T+120s: 12 queries (report generation)
+Total: 30 queries over 3 minutes = 10 QPM average
+
+Spike Pattern (Silver):
+T+0s: 400 queries (batch job start)
+T+60s: 450 queries (continued processing)
+T+120s: 50 queries (back to normal)
+Total: 900 queries over 3 minutes = 300 QPM average
+Triggers: High severity at T+0s (3x baseline exceeded)
+
+Critical Spike (Bronze):
+T+0s: 600 queries (runaway loop)
+T+30s: Circuit breaker engaged
+T+330s: Circuit breaker lifted, normal operation resumes
+
+Multi-Tenant Contention:
+- Gold tenant: 1800 QPM (within limit)
+- Silver tenant: 450 QPM (within limit)
+- Bronze tenant: 90 QPM (within limit)
+Total platform load: 2340 QPM across 3 tenants
+All tenants served without interference due to isolation
+
+Priority Queue Example:
+During platform contention (aggregate 10,000 QPS):
+- Gold tier (priority 3): Gets 60% of available capacity
+- Silver tier (priority 2): Gets 30% of available capacity
+- Bronze tier (priority 1): Gets 10% minimum (fairness floor)
+
+Rate Limit Response Headers:
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 47
+X-RateLimit-Reset: 38
+Retry-After: 38
+
+HTTP 429 Response Example:
+{
+  "error": "Rate limit exceeded",
+  "tenant_id": "tenant_bronze",
+  "current_usage": 105,
+  "limit": 100,
+  "retry_after_seconds": 42
+}
+
+Circuit Breaker Response (HTTP 503):
+{
+  "error": "Service temporarily unavailable",
+  "reason": "Circuit breaker engaged due to excessive usage",
+  "tenant_id": "tenant_silver_runaway",
+  "retry_after_seconds": 300
+}
+
+Noisy Neighbor Detection Thresholds:
+- Baseline: 100 QPM
+- High severity: 300+ QPM (3x baseline) sustained >1 minute
+- Critical severity: 500+ QPM (5x baseline) sustained >30 seconds
+
+Auto-Mitigation Timeline:
+- Detection: 30 seconds (sliding window)
+- Mitigation applied: 60 seconds (high severity)
+- Mitigation applied: 30 seconds (critical severity)
+- Circuit breaker duration: 300 seconds (5 minutes)
+- Notification sent: <10 seconds after detection

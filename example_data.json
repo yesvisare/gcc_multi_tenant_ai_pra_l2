@@ -1,0 +1,70 @@
+{
+  "tenant_scenarios": [
+    {
+      "tenant_id": "tenant_bronze",
+      "tier": "bronze",
+      "normal_qpm": 80,
+      "spike_qpm": 400,
+      "description": "Small internal team with occasional batch jobs"
+    },
+    {
+      "tenant_id": "tenant_silver",
+      "tier": "silver",
+      "normal_qpm": 350,
+      "spike_qpm": 1500,
+      "description": "Medium business unit with customer-facing analytics"
+    },
+    {
+      "tenant_id": "tenant_gold",
+      "tier": "gold",
+      "normal_qpm": 1200,
+      "spike_qpm": 8000,
+      "description": "Critical customer service application"
+    }
+  ],
+  "example_queries": [
+    "What are the revenue trends for Q4 2024?",
+    "Show me all customer support tickets from last week",
+    "Analyze sentiment of product reviews",
+    "Compare sales performance across regions",
+    "What are the top 10 product complaints?",
+    "Generate financial summary for investor report",
+    "What is the churn rate for enterprise customers?",
+    "Show compliance violations in last 30 days"
+  ],
+  "noisy_neighbor_scenarios": [
+    {
+      "scenario": "Batch Job Runaway",
+      "tenant_id": "tenant_silver",
+      "normal_rate": 500,
+      "spike_rate": 3000,
+      "duration_minutes": 15,
+      "mitigation": "50% rate reduction after 1 minute sustained"
+    },
+    {
+      "scenario": "Infinite Loop Bug",
+      "tenant_id": "tenant_bronze",
+      "normal_rate": 100,
+      "spike_rate": 800,
+      "duration_minutes": 5,
+      "mitigation": "Circuit breaker after 30 seconds sustained"
+    },
+    {
+      "scenario": "Legitimate Traffic Spike",
+      "tenant_id": "tenant_gold",
+      "normal_rate": 2000,
+      "spike_rate": 4500,
+      "duration_minutes": 3,
+      "mitigation": "No action - within 3x threshold"
+    }
+  ],
+  "metadata": {
+    "source": "L3_M12_script_examples",
+    "purpose": "demonstration_and_testing",
+    "baseline_metrics": {
+      "p50_latency_overhead_ms": 3,
+      "p95_latency_overhead_ms": 8,
+      "p99_latency_overhead_ms": 12
+    }
+  }
+}
