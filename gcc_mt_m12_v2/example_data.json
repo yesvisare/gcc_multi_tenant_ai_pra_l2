@@ -1,0 +1,82 @@
+{
+  "tenants": [
+    {
+      "tenant_id": "tenant-healthcare-us-001",
+      "data_residency": "US",
+      "region": "us-east-1",
+      "bucket": "rag-docs-us",
+      "sample_documents": [
+        "patient-records/john-doe-2024.pdf",
+        "lab-results/blood-test-123.pdf",
+        "prescriptions/rx-456.pdf"
+      ]
+    },
+    {
+      "tenant_id": "tenant-logistics-eu-002",
+      "data_residency": "EU",
+      "region": "eu-west-1",
+      "bucket": "rag-docs-eu",
+      "sample_documents": [
+        "shipping-manifests/order-789.pdf",
+        "customs-declarations/import-abc.pdf",
+        "invoices/invoice-2024-001.pdf"
+      ]
+    },
+    {
+      "tenant_id": "tenant-fintech-india-003",
+      "data_residency": "India",
+      "region": "ap-south-1",
+      "bucket": "rag-docs-india",
+      "sample_documents": [
+        "kyc-documents/customer-xyz.pdf",
+        "transaction-reports/monthly-jan-2024.pdf",
+        "audit-trails/compliance-report.pdf"
+      ]
+    }
+  ],
+  "presigned_url_examples": [
+    {
+      "operation": "generate_presigned_url",
+      "tenant_id": "tenant-healthcare-us-001",
+      "doc_key": "patient-records/john-doe-2024.pdf",
+      "expiration": 300,
+      "expected_prefix": "tenant-tenant-healthcare-us-001/"
+    },
+    {
+      "operation": "generate_presigned_url",
+      "tenant_id": "tenant-logistics-eu-002",
+      "doc_key": "shipping-manifests/order-789.pdf",
+      "expiration": 300,
+      "expected_prefix": "tenant-tenant-logistics-eu-002/"
+    }
+  ],
+  "cross_tenant_attack_scenarios": [
+    {
+      "attack_type": "cross_tenant_download",
+      "attacker_tenant": "tenant-healthcare-us-001",
+      "target_document": "tenant-logistics-eu-002/shipping-manifests/order-789.pdf",
+      "expected_result": "Forbidden - cross-tenant access denied"
+    },
+    {
+      "attack_type": "presigned_url_manipulation",
+      "attacker_tenant": "tenant-fintech-india-003",
+      "malicious_key": "tenant-healthcare-us-001/patient-records/john-doe-2024.pdf",
+      "expected_result": "Forbidden - document does not belong to tenant"
+    }
+  ],
+  "data_residency_violations": [
+    {
+      "violation_type": "wrong_region_upload",
+      "tenant_id": "tenant-logistics-eu-002",
+      "required_region": "eu-west-1",
+      "attempted_region": "us-east-1",
+      "expected_result": "DataResidencyViolation - tenant data must stay in eu-west-1"
+    }
+  ],
+  "metadata": {
+    "source": "L3_M12.2_script_examples",
+    "purpose": "demonstration_and_testing",
+    "total_tenants": 3,
+    "total_scenarios": 5
+  }
+}

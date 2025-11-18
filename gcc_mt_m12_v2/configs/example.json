@@ -1,0 +1,27 @@
+{
+  "tenants": [],
+  "settings": {
+    "timeout": 30,
+    "max_retries": 3,
+    "presigned_url_expiration": 300,
+    "enable_audit_logging": true,
+    "enable_data_residency_checks": true
+  },
+  "regions": {
+    "us-east-1": {
+      "bucket": "rag-docs-us",
+      "data_residency": "US",
+      "compliance": ["HIPAA", "CCPA"]
+    },
+    "eu-west-1": {
+      "bucket": "rag-docs-eu",
+      "data_residency": "EU",
+      "compliance": ["GDPR"]
+    },
+    "ap-south-1": {
+      "bucket": "rag-docs-india",
+      "data_residency": "India",
+      "compliance": ["DPDPA", "RBI"]
+    }
+  }
+}

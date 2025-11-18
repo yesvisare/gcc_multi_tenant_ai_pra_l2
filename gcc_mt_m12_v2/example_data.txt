@@ -1,0 +1,71 @@
+Sample Document Content for Multi-Tenant Storage Testing
+==========================================================
+
+Tenant: tenant-healthcare-us-001
+Document: patient-records/john-doe-2024.pdf
+Content: Medical record for John Doe, contains HIPAA-protected health information
+Region: us-east-1 (HIPAA compliance required)
+---
+
+Tenant: tenant-logistics-eu-002
+Document: shipping-manifests/order-789.pdf
+Content: Shipping manifest for EU logistics company, contains GDPR-protected customer data
+Region: eu-west-1 (GDPR compliance required)
+---
+
+Tenant: tenant-fintech-india-003
+Document: kyc-documents/customer-xyz.pdf
+Content: Know Your Customer documentation for Indian fintech, contains DPDPA-regulated data
+Region: ap-south-1 (Reserve Bank of India data residency required)
+---
+
+Cross-Tenant Access Test Cases:
+================================
+
+TEST 1: Valid same-tenant upload
+Tenant: tenant-healthcare-us-001
+Action: Upload patient-records/new-record.pdf
+Expected Key: tenant-tenant-healthcare-us-001/patient-records/new-record.pdf
+Expected Result: SUCCESS
+---
+
+TEST 2: Cross-tenant download attempt (SHOULD FAIL)
+Attacker: tenant-healthcare-us-001
+Target: tenant-logistics-eu-002/shipping-manifests/order-789.pdf
+Expected Result: FORBIDDEN - Cross-tenant access denied
+---
+
+TEST 3: Presigned URL with tag validation
+Tenant: tenant-logistics-eu-002
+Document: shipping-manifests/order-789.pdf
+Action: Generate presigned URL
+Security Checks:
+  1. Validate doc_key starts with "tenant-tenant-logistics-eu-002/"
+  2. Verify S3 object tag "tenant_id" matches "tenant-logistics-eu-002"
+  3. Generate URL with 300s expiration
+  4. Audit log generation
+Expected Result: Valid presigned URL, expires in 5 minutes
+---
+
+TEST 4: Data residency violation (SHOULD FAIL)
+Tenant: tenant-logistics-eu-002 (EU residency required)
+Action: Upload to us-east-1 region
+Expected Result: DataResidencyViolation - tenant data must stay in eu-west-1
+---
+
+TEST 5: Presigned URL forwarding to external party
+Tenant: tenant-fintech-india-003
+Document: kyc-documents/customer-xyz.pdf
+Generated URL: https://rag-docs-india.s3.ap-south-1.amazonaws.com/tenant-tenant-fintech-india-003/kyc-documents/customer-xyz.pdf?Expires=1234567890
+Scenario: URL shared externally and accessed after expiration
+Expected Result: 403 Forbidden after 300 seconds
+---
+
+Audit Log Sample Entries:
+==========================
+
+{"timestamp": "2025-01-15T10:30:00Z", "operation": "upload", "tenant_id": "tenant-healthcare-us-001", "doc_key": "patient-records/john-doe-2024.pdf", "status": "success"}
+{"timestamp": "2025-01-15T10:35:00Z", "operation": "presigned_url_generated", "tenant_id": "tenant-logistics-eu-002", "doc_key": "shipping-manifests/order-789.pdf", "expiration": 300}
+{"timestamp": "2025-01-15T10:40:00Z", "operation": "download", "tenant_id": "tenant-healthcare-us-001", "doc_key": "patient-records/john-doe-2024.pdf", "status": "success"}
+{"timestamp": "2025-01-15T10:45:00Z", "operation": "presigned_url_violation", "tenant_id": "tenant-healthcare-us-001", "target": "tenant-logistics-eu-002/shipping-manifests/order-789.pdf", "status": "blocked"}
+{"timestamp": "2025-01-15T10:50:00Z", "operation": "residency_violation_attempt", "tenant_id": "tenant-logistics-eu-002", "details": "Upload: us-east-1 → eu-west-1"}
