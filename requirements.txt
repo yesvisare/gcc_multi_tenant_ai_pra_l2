@@ -1,0 +1,26 @@
+# Core dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+python-dotenv==1.0.0
+pytest==7.4.4
+
+# Pinecone - Vector Database (detected service from script)
+pinecone-client==3.0.0
+
+# Logging and utilities
+structlog==24.1.0
+
+# JWT token handling (for tenant context extraction)
+pyjwt==2.8.0
+cryptography==41.0.7
+
+# Testing
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+httpx==0.26.0
+
+# Jupyter notebook support
+jupyter==1.0.0
+ipykernel==6.29.0
+notebook==7.0.6

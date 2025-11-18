@@ -1,0 +1,120 @@
+Example Vector Database Multi-Tenancy Patterns - Text Data
+================================================================
+
+TENANT CONTEXT EXAMPLES
+-----------------------
+
+Tenant: Morgan Stanley (Investment Banking)
+User: analyst_001
+Use Case: M&A target analysis for technology sector acquisitions
+Security Requirement: Maximum isolation (competing tenant scenario)
+Recommended Model: Dedicated Indexes
+Query: "Identify potential acquisition targets in cloud infrastructure with >$500M revenue"
+
+Tenant: Goldman Sachs (Equity Research)
+User: researcher_042
+Use Case: Equity research valuations and financial analysis
+Security Requirement: High isolation (regulatory compliance)
+Recommended Model: Namespace-Based or Dedicated Indexes
+Query: "Find healthcare companies with strong balance sheets and 20%+ revenue growth"
+
+Tenant: JP Morgan (Wealth Management)
+User: advisor_099
+Use Case: Portfolio recommendations for high net worth clients
+Security Requirement: Standard isolation (internal use only)
+Recommended Model: Namespace-Based
+Query: "Best diversification strategies for $50M+ portfolios in volatile markets"
+
+
+ISOLATION MODEL DECISION FRAMEWORK
+-----------------------------------
+
+Scenario 1: Startup SaaS with 10 tenants, tight budget
+â†' Recommendation: Metadata Filtering
+â†' Cost: ₹1-2L/month
+â†' Rationale: Similar security requirements, cost-optimized, rapid iteration
+
+Scenario 2: Mid-sized GCC with 100 enterprise tenants
+â†' Recommendation: Namespace-Based
+â†' Cost: ₹15-20L/month
+â†' Rationale: Balanced cost/security, fast onboarding (<60s), good isolation (9/10)
+
+Scenario 3: Financial services with competing tenants (insider trading risk)
+â†' Recommendation: Dedicated Indexes
+â†' Cost: ₹60-80L/month (100 tenants)
+â†' Rationale: Regulatory mandate (SOX, SEBI), zero blast radius, maximum isolation (10/10)
+
+
+ATTACK VECTOR EXAMPLES
+-----------------------
+
+Attack 1: Malicious OR Filter Injection
+Attacker Query Filter: {"$or": [{"tenant_id": "tenant_A"}, {"tenant_id": "tenant_B"}]}
+Authenticated Tenant: tenant_A
+Attack Goal: Access tenant_B's embeddings to reconstruct deal information
+Defense: AST parser detects multiple tenant_id values â†' Block query â†' Security alert
+
+Attack 2: Filter Bypass via Missing Tenant Field
+Attacker Query Filter: {"status": "active", "category": "finance"}
+Attack Goal: Query without tenant_id to access all tenants
+Defense: Middleware detects missing tenant_id â†' Reject query â†' Audit log
+
+Attack 3: Complex Nested Filter Manipulation
+Attacker Query Filter: {"$and": [{"tenant_id": "tenant_A"}, {"$or": [{"status": "active"}, {"tenant_id": "tenant_B"}]}]}
+Attack Goal: Hide cross-tenant access in nested structure
+Defense: Recursive AST parser extracts all tenant_id values â†' Detects violation â†' Block
+
+Attack 4: Semantic Clustering Leak
+Attacker Strategy: Query own embeddings repeatedly, infer other tenants from clustering patterns
+Attack Goal: Reconstruct competitive intelligence without direct access
+Defense: Namespace isolation prevents visibility into other tenants' vector space
+
+
+FAILURE SCENARIOS WITH INCIDENT RESPONSE
+-----------------------------------------
+
+Incident 1: Cross-Tenant Data Leak via Filter Bug
+Hour 0: Malicious query bypasses validation, returns 500 records from tenant_B
+Hour 1: Security monitoring detects anomalous result set with multiple tenant_ids
+Hour 2: Circuit breaker shuts down vector query API
+Hour 4: Forensic analysis identifies affected tenants (tenant_B, tenant_C)
+Day 1: Compliance notification to auditors, legal consultation
+Week 1: Architectural fix deployed with 5,000+ penetration tests
+Cost Impact: ₹20-50L technical + ₹50L-5Cr compliance penalties + ₹10-100Cr contract loss
+
+Incident 2: Namespace Limit Exceeded
+Problem: 1,001st tenant onboarding fails (Pinecone limit: ~1,000 namespaces/index)
+Detection: Provisioning API returns "namespace quota exceeded" error
+Resolution: Migrate to multi-index architecture or dedicated indexes tier
+Downtime: 2-4 hours for high-priority tenant migrations
+Prevention: Proactive monitoring at 80% namespace capacity threshold
+
+Incident 3: Metadata Corruption During Ingestion
+Problem: Race condition writes wrong tenant_id to 1,200 vectors
+Detection: Periodic audit scan finds tenant_id mismatches
+Immediate Action: Quarantine corrupted vectors, block affected tenant queries
+Remediation: Re-ingest from source with atomic transaction isolation
+Impact: 3-6 hours downtime for affected tenant
+
+
+COST-BENEFIT ANALYSIS EXAMPLES
+-------------------------------
+
+Example 1: E-commerce Platform with 200 Tenants
+Current: Metadata Filtering (₹16-20L/month)
+Upgrade to Namespace-Based: ₹32-40L/month
+Cost Increase: 2x
+Benefit: 9/10 isolation (vs 7/10), eliminates shared infrastructure risk
+ROI Analysis: If one data leak costs ₹50L-5Cr, upgrade pays for itself in <6 months
+
+Example 2: Healthcare SaaS with HIPAA Requirements
+Regulatory Mandate: Physical isolation required
+Only Option: Dedicated Indexes (₹120-160L/month for 200 tenants)
+Alternative: Build separate deployments per tenant (₹200-300L/month)
+Cost Savings: Dedicated indexes approach saves 40-60% vs separate deployments
+
+Example 3: Startup Scaling from 5 to 50 Tenants
+Phase 1 (5 tenants): Metadata Filtering (₹50K-1L/month)
+Phase 2 (20 tenants): Namespace-Based (₹3-5L/month)
+Phase 3 (50 tenants): Hybrid model - 80% namespace (₹6-8L), 20% dedicated (₹6-8L)
+Total at 50 tenants: ₹12-16L/month with tiered security SLAs

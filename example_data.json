@@ -1,0 +1,139 @@
+{
+  "tenant_contexts": [
+    {
+      "tenant_id": "morgan_stanley",
+      "user_id": "analyst_001",
+      "roles": ["analyst", "user"],
+      "use_case": "M&A target analysis",
+      "timestamp": "2025-01-15T10:30:00Z"
+    },
+    {
+      "tenant_id": "goldman_sachs",
+      "user_id": "researcher_042",
+      "roles": ["researcher", "premium_user"],
+      "use_case": "Equity research valuations",
+      "timestamp": "2025-01-15T11:00:00Z"
+    },
+    {
+      "tenant_id": "jp_morgan",
+      "user_id": "advisor_099",
+      "roles": ["advisor", "wealth_management"],
+      "use_case": "Wealth management portfolios",
+      "timestamp": "2025-01-15T11:30:00Z"
+    }
+  ],
+  "sample_queries": [
+    {
+      "query_text": "What are the recent M&A trends in technology sector?",
+      "query_vector": [0.1, 0.2, 0.3, 0.15, 0.25],
+      "tenant_id": "morgan_stanley",
+      "isolation_model": "namespace_based",
+      "expected_namespace": "tenant_morgan_stanley"
+    },
+    {
+      "query_text": "Find companies with strong revenue growth in healthcare",
+      "query_vector": [0.2, 0.3, 0.1, 0.25, 0.15],
+      "tenant_id": "goldman_sachs",
+      "isolation_model": "dedicated_indexes",
+      "expected_index": "goldman_sachs_index"
+    },
+    {
+      "query_text": "Best diversification strategies for high net worth individuals",
+      "query_vector": [0.3, 0.1, 0.2, 0.2, 0.2],
+      "tenant_id": "jp_morgan",
+      "isolation_model": "metadata_filtering",
+      "expected_filter": {"tenant_id": "jp_morgan"}
+    }
+  ],
+  "attack_scenarios": [
+    {
+      "name": "Cross-tenant OR filter attack",
+      "malicious_filter": {
+        "$or": [
+          {"tenant_id": "morgan_stanley"},
+          {"tenant_id": "goldman_sachs"}
+        ]
+      },
+      "attacker_tenant": "morgan_stanley",
+      "target_tenant": "goldman_sachs",
+      "expected_behavior": "blocked_by_validation",
+      "severity": "critical"
+    },
+    {
+      "name": "Filter bypass with missing tenant_id",
+      "malicious_filter": {
+        "category": "finance"
+      },
+      "attacker_tenant": "morgan_stanley",
+      "expected_behavior": "rejected_missing_tenant_filter",
+      "severity": "high"
+    },
+    {
+      "name": "Complex nested filter manipulation",
+      "malicious_filter": {
+        "$and": [
+          {"tenant_id": "morgan_stanley"},
+          {
+            "$or": [
+              {"status": "active"},
+              {"tenant_id": "goldman_sachs"}
+            ]
+          }
+        ]
+      },
+      "attacker_tenant": "morgan_stanley",
+      "target_tenant": "goldman_sachs",
+      "expected_behavior": "blocked_by_ast_parser",
+      "severity": "critical"
+    }
+  ],
+  "isolation_model_comparisons": [
+    {
+      "model": "metadata_filtering",
+      "cost_50_tenants": "₹5-8L/month",
+      "isolation_strength": "7/10",
+      "provisioning_time": "Immediate",
+      "best_for": "Cost-sensitive deployments with similar security requirements"
+    },
+    {
+      "model": "namespace_based",
+      "cost_50_tenants": "₹8-12L/month",
+      "isolation_strength": "9/10",
+      "provisioning_time": "<60 seconds",
+      "best_for": "Most GCC scenarios with balanced trade-offs"
+    },
+    {
+      "model": "dedicated_indexes",
+      "cost_50_tenants": "₹30-40L/month",
+      "isolation_strength": "10/10",
+      "provisioning_time": "Hours to days",
+      "best_for": "Competing tenants with regulatory mandates (SOX, HIPAA)"
+    }
+  ],
+  "failure_scenarios": [
+    {
+      "failure": "Middleware bypass via direct vector DB access",
+      "cause": "Missing network isolation",
+      "fix": "Implement API-only access with firewall rules",
+      "detection": "Monitor unauthorized connection attempts"
+    },
+    {
+      "failure": "Filter logic bug in complex AND/OR queries",
+      "cause": "Incomplete AST parser validation",
+      "fix": "Add comprehensive penetration test suite (5,000+ attempts)",
+      "detection": "Post-query result validation catching wrong tenant_id"
+    },
+    {
+      "failure": "Metadata corruption during ingestion",
+      "cause": "Race condition in multi-threaded writes",
+      "fix": "Implement atomic metadata updates with transaction isolation",
+      "detection": "Periodic tenant_id audit scans"
+    },
+    {
+      "failure": "Namespace limit exceeded (>1,000 namespaces)",
+      "cause": "Platform scalability constraint",
+      "fix": "Migrate to dedicated indexes or multi-index architecture",
+      "detection": "Proactive namespace count monitoring"
+    }
+  ]
+}

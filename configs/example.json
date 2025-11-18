@@ -1,0 +1,17 @@
+{
+  "isolation_config": {
+    "model": "namespace_based",
+    "max_namespaces": 1000,
+    "provisioning_timeout_seconds": 60
+  },
+  "security_settings": {
+    "enable_cross_tenant_detection": true,
+    "enable_audit_logging": true,
+    "max_query_attempts_per_minute": 100
+  },
+  "query_settings": {
+    "default_top_k": 10,
+    "max_top_k": 100,
+    "query_timeout_ms": 5000
+  }
+}
